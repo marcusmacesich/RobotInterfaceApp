@@ -1,0 +1,10 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.interface, name='interface'),
+    path('upload/', views.upload_page, name='upload_page'),
+    path('upload_program', views.upload_program, name='upload_program'),
+    path('prepare_save_program/', views.prepare_save, name='prepare_save_program'),
+    path('save_program/', views.save_program, name='save_program'),
+]

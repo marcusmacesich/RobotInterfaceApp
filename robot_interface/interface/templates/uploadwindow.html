@@ -1,0 +1,167 @@
+<!-- uploadwindow.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Robot Program Execution</title>
+    <!-- Include Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+    <style>
+        /* Reset Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* Common Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #a7b1b7;
+            color: #333;
+        }
+        /* Navigation Bar */
+        .navbar {
+            background-color: #ba0c2f;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        /* Controls Section */
+        .controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .controls button {
+            margin-right: 15px;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            background-color: #1a73e8;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .controls button:hover {
+            background-color: #1669c1;
+        }
+        /* Console Styles */
+        #console {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border-radius: 4px;
+        }
+        #console h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .message {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .message.error {
+            color: #f44747;
+        }
+        .message.success {
+            color: #4caf50;
+        }
+        .message.info {
+            color: #9cdcfe;
+        }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>ECE 6-Axis Programming Interface</h1>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="start-btn">Start Program</button>
+            <button id="stop-btn">Stop Program</button>
+        </div>
+
+        <!-- Console Output -->
+        <div id="console">
+            <h3>Console Output:</h3>
+            <!-- Console messages will appear here -->
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2024 ECE Capstone Team 1. Zero rights reserved.
+    </div>
+
+    <script>
+        // Function to append messages to the console
+        function appendToConsole(message, type='info') {
+            var consoleDiv = document.getElementById('console');
+            var newMessage = document.createElement('div');
+            newMessage.textContent = message;
+            newMessage.classList.add('message', type);
+            consoleDiv.appendChild(newMessage);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
+        }
+
+        // Display initial status message from the server
+        var statusMessage = '{{ status|escapejs }}';
+        if (statusMessage) {
+            appendToConsole(statusMessage, 'success');
+        }
+
+        // Event listeners for Start and Stop buttons
+        document.getElementById('start-btn').addEventListener('click', function() {
+            // Implement start program functionality here
+            appendToConsole('Starting program...', 'info');
+        });
+
+        document.getElementById('stop-btn').addEventListener('click', function() {
+            // Implement stop program functionality here
+            appendToConsole('Stopping program...', 'info');
+        });
+
+        // Placeholder: Simulate an error message
+        /*
+        setTimeout(function() {
+            appendToConsole('Error: Failed to upload program to robot.', 'error');
+        }, 2000);
+        */
+    </script>
+
+</body>
+</html>

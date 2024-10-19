@@ -1,0 +1,177 @@
+<!-- idewindow.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECE 6-Axis Programming Interface</title>
+    <!-- Include Ace Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.11.2/ace.js"></script>
+    <!-- Include Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+    <style>
+        /* Reset Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* Common Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #a7b1b7;
+            color: #333;
+        }
+        /* Navigation Bar */
+        .navbar {
+            background-color: #ba0c2f;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        /* Controls Section */
+        .controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .controls label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        .controls select {
+            margin-right: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .controls button {
+            margin-right: 10px;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            background-color: #1a73e8;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .controls button:hover {
+            background-color: #1669c1;
+        }
+        /* Editor Styles */
+        #editor {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>ECE 6-Axis Programming Interface</h1>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Add form element -->
+        <form id="upload-form" method="post" action="{% url 'upload_program' %}">
+            {% csrf_token %}
+            <div class="controls">
+                <label for="robot-select">Select Robot:</label>
+                <select id="robot-select" name="selected_robot">
+                    <option value="robot1">Robot 1</option>
+                    <option value="robot2">Robot 2</option>
+                    <option value="robot3">Robot 3</option>
+                    <!-- Add more robots as needed -->
+                </select>
+                <!-- Hidden input to store code -->
+                <input type="hidden" id="code-input" name="code">
+                <button type="button" id="upload-btn">Upload</button>
+                <button type="button" id="save-btn">Save</button>
+            </div>
+        </form>
+
+        <div id="editor">// Write your code here</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2024 ECE Capstone Team 1. Zero rights reserved.
+    </div>
+
+    <script>
+        // Initialize the Ace Editor
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/github"); // Changed theme for better contrast
+        editor.session.setMode("ace/mode/python"); // Change to python
+        editor.setOptions({
+            fontSize: "14pt"
+        });
+
+        // Event listener for the Upload button
+        document.getElementById('upload-btn').addEventListener('click', function() {
+            var code = editor.getValue();
+            // Set the value of the hidden input
+            document.getElementById('code-input').value = code;
+            // Submit the form
+            document.getElementById('upload-form').submit();
+        });
+
+        // Event listener for the Save button
+        document.getElementById('save-btn').addEventListener('click', function() {
+            var code = editor.getValue();
+            // Store the code in session or send it to the server to pass to the next page
+
+
+            // Create a form to submit the code
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '{% url "prepare_save_program" %}'; // A new view to handle this
+            form.style.display = 'none';
+
+            // Add CSRF token
+            var csrfTokenInput = document.createElement('input');
+            csrfTokenInput.type = 'hidden';
+            csrfTokenInput.name = 'csrfmiddlewaretoken';
+            csrfTokenInput.value = '{{ csrf_token }}';
+            form.appendChild(csrfTokenInput);
+
+            // Add code input
+            var codeInput = document.createElement('input');
+            codeInput.type = 'hidden';
+            codeInput.name = 'code';
+            codeInput.value = code;
+            form.appendChild(codeInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    </script>
+
+</body>
+</html>
