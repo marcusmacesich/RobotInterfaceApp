@@ -171,6 +171,28 @@
             document.body.appendChild(form);
             form.submit();
         });
+
+        //Event listener to save any changes made to the text persistantly
+        editor.addEventListener('input', function(){
+            setPersistant("codeText",editor.getValue());
+            console.log(getPersistant("codeText"));
+        })
+
+        //Initilises the text in the editor
+        let txt = getPersistant("codeText");
+        if(txt.localeCompare("")!=0){
+            editor.setValue(txt);
+        }else{
+            editor.setValue("// Write your code here");
+        }
+
+        function setPersistant(key, value) {
+            localStorage.setItem(key, value);
+        }
+
+        function getPersistant(key) {
+            return localStorage.getItem(key); // Returns the stored value or null if it doesn’t exist
+        }
     </script>
 
 </body>
