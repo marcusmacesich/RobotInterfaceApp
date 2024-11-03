@@ -83,8 +83,10 @@ def save_program(request):
         if not code:
             return redirect('interface')
         return render(request, 'savewindow.html', {'code': code})
+     
+def code_templates(request):
+    return render(request, 'codetemplates.html')
 
-        
 def robot_get_code(request, robot_id):
     # The robot will request this URL with its robot_id
     try:

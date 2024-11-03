@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.interface, name='interface'),
+    path('codetemplates/', views.code_templates, name='codetemplates'),
     path('upload/', views.upload_page, name='upload_page'),
     path('upload_program', views.upload_program, name='upload_program'),
     path('prepare_save_program/', views.prepare_save, name='prepare_save_program'),
