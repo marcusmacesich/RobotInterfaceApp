@@ -101,3 +101,5 @@ def robot_get_code(request, robot_id):
 
     # Return the code
     return HttpResponse(program.code, content_type='text/plain')
+def sitemap_view(request):
+    return render(request, 'sitemap.html')
