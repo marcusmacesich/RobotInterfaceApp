@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from .models import Robot, Program
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
 
 def interface(request):
     # Load the editor interface page
@@ -24,25 +27,33 @@ def upload_program(request):
             return redirect('interface')
 
         # Save the code to the database
-        Program.objects.create(
+        program = Program.objects.create(
             student=request.user,
             robot=robot,
-            code=code
+            code=code,
+            status='Waiting'
         )
         # place holder for passing through error message
         # error_message = None
 
         # Success message
         request.session['upload_status'] = 'Program uploaded successfully'
-        return redirect('upload_page')
+        return redirect('upload_page', program_id=program.id)
     else:
         return redirect('interface')
 
-def upload_page(request):
+def upload_page(request, program_id):
     status = request.session.get('upload_status', '')
 
     request.session['upload_status'] = ''
-    return render(request, 'uploadwindow.html', {'status': status})
+
+    # Get the latest Program for the current user
+    try:
+        program = Program.objects.get(id=program_id, student=request.user)
+    except Program.DoesNotExist:
+        program = None
+
+    return render(request, 'uploadwindow.html', {'status': status, 'program': program})
 
 def prepare_save(request):
     if request.method == 'POST':
@@ -84,7 +95,27 @@ def save_program(request):
             return redirect('interface')
         return render(request, 'savewindow.html', {'code': code})
 
-        
+#@csrf_exempt
+def start_program(request, robot_id):
+    if request.method == 'POST':
+        # Parse JSON data from the request body
+        data = json.loads(request.body)
+        program_id = data.get('program_id')
+
+        #robot = Robot.objects.get(id=robot_id)
+
+        try:
+            # Fetch the Program instance by ID
+            program = Program.objects.get(id=program_id, robot__id=robot_id, student=request.user)
+            # Update the status to 'Run'
+            program.status = 'Run'
+            program.save()
+            return HttpResponse('Success')
+        except Program.DoesNotExist:
+            return HttpResponse('Program not found', status=404)
+    else:
+        return HttpResponse('Invalid request method', status=405)
+
 def robot_get_code(request, robot_id):
     # The robot will request this URL with its robot_id
     try:
@@ -93,9 +124,23 @@ def robot_get_code(request, robot_id):
         return HttpResponse('Robot not found.', status=404)
 
     # Get the latest program for this robot
-    program = Program.objects.filter(robot=robot).order_by('-upload_time').first()
+    program = Program.objects.filter(robot=robot, status='Waiting').order_by('-upload_time').first()
     if program is None:
         return HttpResponse('No program available.', status=404)
 
     # Return the code
     return HttpResponse(program.code, content_type='text/plain')
+
+def robot_exec_status(request, robot_id):
+
+    try:
+        robot = Robot.objects.get(id=robot_id)
+    except Robot.DoesNotExist:
+        return HttpResponse('Robot Not Found', status=404)
+
+    program = Program.objects.filter(robot=robot, status__in=['Waiting', 'Run', 'Stop']).order_by('-upload_time').first()
+
+    if program is None:
+        return HttpResponse('No Status Available', status=404)
+
+    return(HttpResponse(program.status, content_type='text/plain'))
