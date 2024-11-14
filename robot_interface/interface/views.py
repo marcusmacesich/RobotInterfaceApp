@@ -144,3 +144,9 @@ def robot_exec_status(request, robot_id):
         return HttpResponse('No Status Available', status=404)
 
     return(HttpResponse(program.status, content_type='text/plain'))
+
+def sitemap_view(request):
+    return render(request, 'sitemap.html')
+
+def code_templates(request):
+    return render(request, 'codetemplates.html')
