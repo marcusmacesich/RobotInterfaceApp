@@ -150,3 +150,7 @@ def sitemap_view(request):
 
 def code_templates(request):
     return render(request, 'codetemplates.html')
+
+def stream(request):
+    # Load the stream page
+    return render(request, 'stream.html')

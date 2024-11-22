@@ -11,5 +11,6 @@ urlpatterns = [
     path('robot_code/<int:robot_id>/exec', views.robot_exec_status, name='robot_exec_status'),
     path('start_program/<int:robot_id>/', views.start_program, name='start_program'),
     path('sitemap/', views.sitemap_view, name='sitemap'),
+    path('stream', views.stream, name='stream'),
     path('codetemplates/', views.code_templates, name='codetemplates')
 ]
