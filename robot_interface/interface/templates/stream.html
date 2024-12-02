@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Stream Viewer</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"></script>
+    <style>
+        /* Reset and Common Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #a7b1b7;
+            color: #000;
+        }
+        /* Navigation Bar */
+        .navbar {
+            background-color: #ba0c2f;
+            padding: 15px 20px;
+            color: #fff;
+        }
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            min-height: 650px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+            color: #000;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+        }
+        video {
+            width: 80%;
+            max-width: 960px;
+            margin: 20px 0;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        .card {
+            margin: 20px 0;
+            padding: 20px;
+            text-align: left;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            color: #000;
+        }
+        .card-header {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .card-body p, .card-body ol {
+            text-align: left;
+        }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+        /* Custom Styles for Buttons */
+        .btn-group {
+            margin: 20px auto;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: 1px solid #5a6268;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: 1px solid #0056b3;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        #streamset {
+            background-color: #ba0c2f;
+            border: 1px solid #900;
+            color: #fff;
+        }
+        /*
+        #streamset:hover {
+            background-color: #900;
+            transform: scale(1.05);
+        }
+        */
+        /* Center the dropdown menu items in their boxes */
+        .dropdown-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 8px;
+            /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);*/
+            max-width: max-content;
+            margin: 0 auto; /* Center the menu on the page horizontally */
+            text-align: center;
+            padding: 0; /* Remove extra spacing */
+            list-style: none; /* Remove bullet points */
+        }
+
+        .dropdown-item {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            background-color: #ba0c2f;
+            border: 1px solid #900;
+            color: #fff;
+            padding: 8px 16px; /* Add padding for a larger clickable area */
+            display: block;
+            margin: 8px 0; /* Add spacing between the boxes */
+            width: 100%; /* Ensure consistent box width */
+            box-sizing: border-box; /* Include padding in width calculations */
+            font-size: 24px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        #dropdown-item:hover {
+            background-color: #900;
+            transform: scale(1.05);
+        }
+
+        /* Optional: Center the individual dropdown items outside the list */
+        .dropdown-item + .dropdown-item {
+            margin-top: 8px; /* Add spacing between individual items */
+        }
+        .buttonz{
+            position: relative;
+            text-align: center;
+        }
+    </style>
+    <script>
+        const server = "http://192.168.0.162:8088/janus"; // Replace with your Janus server address
+        const iceServers = [{ urls: "stun:stun.l.google.com:19302" }]; // Example STUN server, modify as needed
+    </script>
+    <script>{% load static %}</script>
+    <script src="{% static 'js/adapter.js' %}"></script>
+    <script src="{% static 'js/janus.js' %}"></script>
+    <script src="{% static 'js/streaming.js' %}"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>ECE 6-Axis Programming Interface - Stream Viewer</h1>
+    </div>
+    <div class="container">
+        <h2>Live Stream</h2>
+        <button class="btn btn-secondary" autocomplete="off" id="start">Connect</button>
+        <div class="mt-4" id="streams">
+            <div class="col-md-6" id="videos"><!--streaming.js dumps the stream code here when watch is pressed--></div>
+        </div>
+    </div>
+    <div class = "buttonz">
+            <div autocomplete="off" id="streamset" class="btn btn-secondary dropdown-toggle">Select a Stream</div>
+            <ul id="streamslist" class="dropdown-menu" role="menu"></ul>
+        <div class="btn-group">
+            <button class="btn btn-primary" autocomplete="off" id="watch">Watch</button>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+        <li>&copy; 2024 ECE Capstone Team 1. Zero rights reserved.</li>
+        <li><a href="{% url 'sitemap' %}">Site Map</a></li>
+    </div>
+</body>
+</html>

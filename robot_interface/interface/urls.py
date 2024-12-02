@@ -13,6 +13,8 @@ urlpatterns = [
     path('stop_program/<int:robot_id>/', views.stop_program, name='stop_program'),
     path('requeue_program/<int:robot_id>/', views.requeue_program, name='requeue_program'),
     path('sitemap/', views.sitemap_view, name='sitemap'),
+    path('stream', views.stream, name='stream'),
+    path('codetemplates/', views.code_templates, name='codetemplates'),
     path('codetemplates/', views.code_templates, name='codetemplates'),
     path('robot_code/<int:robot_id>/finish_program/', views.finish_program, name='finish_program')
 ]
