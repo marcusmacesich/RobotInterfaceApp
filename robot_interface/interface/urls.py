@@ -10,6 +10,9 @@ urlpatterns = [
     path('robot_code/<int:robot_id>', views.robot_get_code, name='robot_get_code'),
     path('robot_code/<int:robot_id>/exec', views.robot_exec_status, name='robot_exec_status'),
     path('start_program/<int:robot_id>/', views.start_program, name='start_program'),
+    path('stop_program/<int:robot_id>/', views.stop_program, name='stop_program'),
+    path('requeue_program/<int:robot_id>/', views.requeue_program, name='requeue_program'),
     path('sitemap/', views.sitemap_view, name='sitemap'),
-    path('codetemplates/', views.code_templates, name='codetemplates')
+    path('codetemplates/', views.code_templates, name='codetemplates'),
+    path('robot_code/<int:robot_id>/finish_program/', views.finish_program, name='finish_program')
 ]

@@ -112,10 +112,12 @@
         <div class="controls">
             {% if program %}
                 <button id="start-btn" data-program-id="{{ program.id }}" data-robot-id="{{ program.robot.id }}">Start Program</button>
+                <button id="stop-btn" data-program-id="{{ program.id }}" data-robot-id="{{ program.robot.id }}">Stop Program</button>
+                <button id="requeue-btn" data-program-id="{{ program.id }}" data-robot-id="{{ program.robot.id }}">Requeue Program</button>
             {% else %}
                 <p>No program uploaded yet.</p>
             {% endif %}
-            <button id="stop-btn">Stop Program</button>
+
         </div>
 
         <!-- Console Output -->
@@ -201,10 +203,73 @@
             console.error('Start button not found');
         }
 
-        document.getElementById('stop-btn').addEventListener('click', function() {
-            // Implement stop program functionality here
-            appendToConsole('Stopping program...', 'info');
-        });
+        var stopBtn = document.getElementById('stop-btn');
+        if (stopBtn) {
+            stopBtn.addEventListener('click', function() {
+                appendToConsole('Stopping program...', 'info');
+
+                // Get the Program ID from the data attribute
+                var programId = this.getAttribute('data-program-id');
+                var robotID = this.getAttribute('data-robot-id');
+
+                // Send AJAX request to update the Program status
+                var xhr = new XMLHttpRequest();
+                
+                xhr.open('POST', '/stop_program/' + robotID + '/', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('X-CSRFToken', getCSRFToken());
+
+                // Handle the response
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            appendToConsole('Program status updated to Stop', 'success');
+                        } else {
+                            appendToConsole('Failed to update program status', 'error');
+                        }
+                    }
+                };
+
+                // Send the request with the Program ID
+                xhr.send(JSON.stringify({'program_id': programId}));
+            });
+        } else {
+            console.error('Stop button not found');
+        }
+
+        var requeueBtn = document.getElementById('requeue-btn');
+        if (requeueBtn) {
+            requeueBtn.addEventListener('click', function() {
+                appendToConsole('Requeueing program...', 'info');
+
+                // Get the Program ID from the data attribute
+                var programId = this.getAttribute('data-program-id');
+                var robotID = this.getAttribute('data-robot-id');
+
+                // Send AJAX request to update the Program status
+                var xhr = new XMLHttpRequest();
+                
+                xhr.open('POST', '/requeue_program/' + robotID + '/', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('X-CSRFToken', getCSRFToken());
+
+                // Handle the response
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            appendToConsole('Program status updated to Waiting', 'success');
+                        } else {
+                            appendToConsole('Failed to update program status', 'error');
+                        }
+                    }
+                };
+
+                // Send the request with the Program ID
+                xhr.send(JSON.stringify({'program_id': programId}));
+            });
+        } else {
+            console.error('Stop button not found');
+        }
 
         // Placeholder: Simulate an error message
         /*

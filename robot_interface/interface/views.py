@@ -116,20 +116,64 @@ def start_program(request, robot_id):
     else:
         return HttpResponse('Invalid request method', status=405)
 
+def stop_program(request, robot_id):
+    if request.method == 'POST':
+        # Parse JSON data from the request body
+        data = json.loads(request.body)
+        program_id = data.get('program_id')
+
+        #robot = Robot.objects.get(id=robot_id)
+
+        try:
+            # Fetch the Program instance by ID
+            program = Program.objects.get(id=program_id, robot__id=robot_id, student=request.user)
+            # Update the status to 'Run'
+            program.status = 'Stop'
+            program.save()
+            return HttpResponse('Success')
+        except Program.DoesNotExist:
+            return HttpResponse('Program not found', status=404)
+    else:
+        return HttpResponse('Invalid request method', status=405)
+        
+def requeue_program(request, robot_id):
+    if request.method == 'POST':
+        # Parse JSON data from the request body
+        data = json.loads(request.body)
+        program_id = data.get('program_id')
+
+        #robot = Robot.objects.get(id=robot_id)
+
+        try:
+            # Fetch the Program instance by ID
+            program = Program.objects.get(id=program_id, robot__id=robot_id, student=request.user)
+            # Update the status to 'Run'
+            program.status = 'Waiting'
+            program.save()
+            return HttpResponse('Success')
+        except Program.DoesNotExist:
+            return HttpResponse('Program not found', status=404)
+    else:
+        return HttpResponse('Invalid request method', status=405)
+        
+
 def robot_get_code(request, robot_id):
     # The robot will request this URL with its robot_id
     try:
         robot = Robot.objects.get(id=robot_id)
     except Robot.DoesNotExist:
-        return HttpResponse('Robot not found.', status=404)
+        return JsonResponse({'error': 'Robot not found.'}, status=404)
 
     # Get the latest program for this robot
     program = Program.objects.filter(robot=robot, status='Waiting').order_by('-upload_time').first()
     if program is None:
-        return HttpResponse('No program available.', status=404)
+        return JsonResponse({'error': 'No program available.'}, status=404)
 
-    # Return the code
-    return HttpResponse(program.code, content_type='text/plain')
+    data = {
+        'program_id': program.id,
+        'code': program.code
+    }
+    return JsonResponse(data)
 
 def robot_exec_status(request, robot_id):
 
@@ -144,6 +188,31 @@ def robot_exec_status(request, robot_id):
         return HttpResponse('No Status Available', status=404)
 
     return(HttpResponse(program.status, content_type='text/plain'))
+
+@csrf_exempt
+def finish_program(request, robot_id):
+    if request.method == 'POST':
+        try:
+            robot = Robot.objects.get(id=robot_id)
+        except Robot.DoesNotExist:
+            return JsonResponse({'error': 'Robot Not Found'}, status=404)
+
+        # Parse JSON data from the request body
+        data = json.loads(request.body)
+        program_id = data.get('program_id')
+
+        try:
+            # Fetch the Program instance by ID and robot ID
+            program = Program.objects.get(id=program_id, robot=robot)
+            # Update the status to 'Finished'
+            program.status = 'Finished'
+            program.save()
+            return JsonResponse({'message': 'Program status updated to Finished'})
+        except Program.DoesNotExist:
+            return JsonResponse({'error': 'Program not found'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 def sitemap_view(request):
     return render(request, 'sitemap.html')
