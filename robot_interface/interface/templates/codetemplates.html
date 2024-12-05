@@ -135,14 +135,42 @@
         <div class="block-container">
             <!-- 10 Selectable Text Blocks with Expandable Content -->
             <div class="text-block" id="textBlock1" onclick="selectBlock(1)">
-                <div class="text-content">Large block of text 1 for Block 1</div>
+                <div class="text-content">Code for Lab 1</div>
                 <button class="dropdown-button" onclick="toggleDropdown(event, 1)">▲</button>
             </div>
             <!-- Move extra-content below each block -->
-            <div class="extra-content" id="extraContent1">This is additional text for Block 1 that appears on expansion.</div>
+            <div class="extra-content" id="extraContent1"><code><pre>
+#GetPositons.py file
+import numpy as np
+import math
+
+def get_pos(polar):
+    if(polar)
+        r = robot.posr
+        theta = robot.posθ
+        phi = robot.posø
+        ret [r, theta, phi]
+    else
+        x = robot.posx
+        y = robot.posy
+        z = robot.posz
+        ret [x, y, z]
+
+def orintation_Calc(m1,n):
+    i = 0
+    mreturn = np.array([0,0])
+    for ø in robot.angles
+        l = robot.length[i]
+        inter = np.array([math.cos(ø),-math.sin(ø)],[math.sin(ø),math.cos(ø)]) @ np.array([1,0])
+        mreturn = mreturn+l*inter
+        if i == n:
+            break
+        i+=1
+
+            </code></pre></div>
 
             <div class="text-block" id="textBlock2" onclick="selectBlock(2)">
-                <div class="text-content">Large block of text 2 for Block 2</div>
+                <div class="text-content">Code for Lab 2</div>
                 <button class="dropdown-button" onclick="toggleDropdown(event, 2)">▲</button>
             </div>
             <div class="extra-content" id="extraContent2">This is additional text for Block 2 that appears on expansion.</div>
@@ -150,7 +178,7 @@
             <!-- Additional blocks up to textBlock10 -->
 
             <div class="text-block" id="textBlock10" onclick="selectBlock(10)">
-                <div class="text-content">Large block of text 10 for Block 10</div>
+                <div class="text-content">Code for Lab 3</div>
                 <button class="dropdown-button" onclick="toggleDropdown(event, 10)">▲</button>
             </div>
             <div class="extra-content" id="extraContent10">This is additional text for Block 10 that appears on expansion.</div>
