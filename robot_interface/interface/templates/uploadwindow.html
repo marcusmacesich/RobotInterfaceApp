@@ -99,12 +99,18 @@
     </style>
 </head>
 <body>
-    <script>{% load static %}</script>
-    <script src="{% static 'js/janus.js' %}"></script>
-    <script src="{% static 'js/adapter.js' %}"></script>
+<!--
+    The imports needed to make the console and video feed from the pi work.
+-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"></script>
+    <script>{% load static %}</script>
+    <!--janus.ja and adapter.js are both needed and taken directly from the janus page.-->>
+    <script src="{% static 'js/janus.js' %}"></script>
+    <script src="{% static 'js/adapter.js' %}"></script>
+    <!--This import may need renamed to improve clarity of what it does. Currently gets the console output from the Janus server-->
     <script src="{% static 'js/textroom.js' %}"></script>
+
     <!-- Navigation Bar -->
     <div class="navbar">
         <h1>ECE 6-Axis Programming Interface</h1>
@@ -129,6 +135,7 @@
         <div id="console">
             <h3>Console Output:</h3>
             <!-- Console messages will appear here -->
+            <!-- textroom.js currently does this-->
         </div>
 
     </div>

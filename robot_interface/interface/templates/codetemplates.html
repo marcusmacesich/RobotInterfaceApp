@@ -130,6 +130,27 @@
         <h1>ECE 6-Axis Programming Interface</h1>
     </div>
 
+    <!--
+        Boiler plate code to create each dropdown block
+
+        <div class="text-block" id="textBlock#" onclick="selectBlock(#)">
+        <div class="text-content">Code for Lab #</div>
+        <button class="dropdown-button" onclick="toggleDropdown(event, #)">▲</button>
+        </div>
+        <div class="extra-content" id="extraContent#"><pre>
+        This is additional text for Block # that appears on expansion.
+        </pre></div>
+    
+        JavaScript handles the logic for displaying the hidden code. 
+        The hidden code is stored in the extra content section.
+        When the copy button is pushed, the code will be copied to the local strorage of the webbrowser under the name codeText as well as the clipboard. 
+        The <pre> and </pre> are not copied, and are used to allow the text in the block to be eaiser to insert in the code. 
+        # is any place when a number should be inserted, and the nuber denotes each block. The number is arbitrary. 1-10 are currently used for consistancy.
+        See toggleDropdowns and selectBlock in the javascript for further details. 
+        
+        Still needs actual code for each block.
+    -->
+
     <!-- Main Content Container -->
     <div class="container">
         <div class="block-container">
@@ -139,7 +160,8 @@
                 <button class="dropdown-button" onclick="toggleDropdown(event, 1)">▲</button>
             </div>
             <!-- Move extra-content below each block -->
-            <div class="extra-content" id="extraContent1"><code><pre>
+            <!-- currently stores temporary code-->
+            <div class="extra-content" id="extraContent1"><code><pre> 
 #GetPositons.py file
 import numpy as np
 import math
@@ -175,10 +197,50 @@ def orintation_Calc(m1,n):
             </div>
             <div class="extra-content" id="extraContent2">This is additional text for Block 2 that appears on expansion.</div>
 
-            <!-- Additional blocks up to textBlock10 -->
+            <div class="text-block" id="textBlock3" onclick="selectBlock(3)">
+                <div class="text-content">Code for Lab 3</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 3)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent3">This is additional text for Block 3 that appears on expansion.</div>
+
+            <div class="text-block" id="textBlock4" onclick="selectBlock(4)">
+                <div class="text-content">Code for Lab 4</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 4)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent4">This is additional text for Block 4 that appears on expansion.</div>
+
+            <div class="text-block" id="textBlock5" onclick="selectBlock(5)">
+                <div class="text-content">Code for Lab 5</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 5)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent5">This is additional text for Block 5 that appears on expansion.</div>
+
+            <div class="text-block" id="textBlock6" onclick="selectBlock(6)">
+                <div class="text-content">Code for Lab 6</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 6)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent6">This is additional text for Block 6 that appears on expansion.</div>
+
+            <div class="text-block" id="textBlock7" onclick="selectBlock(7)">
+                <div class="text-content">Code for Lab 7</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 7)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent10">This is additional text for Block 7 that appears on expansion.</div>
+
+            <div class="text-block" id="textBlock8" onclick="selectBlock(8)">
+                <div class="text-content">Code for Lab 8</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 8)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent8">This is additional text for Block 8 that appears on expansion.</div>
+
+            <div class="text-block" id="textBlock9" onclick="selectBlock(9)">
+                <div class="text-content">Code for Lab 9</div>
+                <button class="dropdown-button" onclick="toggleDropdown(event, 9)">▲</button>
+            </div>
+            <div class="extra-content" id="extraContent9">This is additional text for Block 9 that appears on expansion.</div>
 
             <div class="text-block" id="textBlock10" onclick="selectBlock(10)">
-                <div class="text-content">Code for Lab 3</div>
+                <div class="text-content">Code for Lab 10</div>
                 <button class="dropdown-button" onclick="toggleDropdown(event, 10)">▲</button>
             </div>
             <div class="extra-content" id="extraContent10">This is additional text for Block 10 that appears on expansion.</div>
@@ -187,6 +249,7 @@ def orintation_Calc(m1,n):
             <button class="copy-button" onclick="copySelectedText()">Copy Selected Text</button>
         </div>
     </div>
+
 
     <!-- Footer -->
     <div class="footer">
@@ -198,7 +261,14 @@ def orintation_Calc(m1,n):
 
     <script>
         let selectedBlockId = null;
-
+        /*
+        * Function is called whenever a block is clicked.
+        *
+        * By passing in the blockId as to the function, string manipulation can add and remove the selected tag.
+        * The selectedBlockId is also used in copySelectedText.
+        * 
+        * Updates selectedBlockId to blockId
+        */
         function selectBlock(blockId) {
             if (selectedBlockId) {
                 document.getElementById(`textBlock${selectedBlockId}`).classList.remove('selected');
@@ -207,12 +277,17 @@ def orintation_Calc(m1,n):
             document.getElementById(`textBlock${blockId}`).classList.add('selected');
         }
 
+        /*
+        * Copies the text to the clipboard and to the local storage name codeText.
+        * Takes the text from the selected text box.
+        * 
+        * No changes to the variables. 
+        */
         function copySelectedText() {
             if (selectedBlockId) {
                 const selectedText = document.getElementById(`extraContent${selectedBlockId}`).textContent.trim();
                 navigator.clipboard.writeText(selectedText).then(() => {
                     localStorage.setItem("codeText", selectedText);
-                    console.log(selectedText);
                     alert('Selected text copied to workspace and clipboard!');
                 }).catch(err => {
                     alert('Failed to copy text.');
@@ -222,6 +297,13 @@ def orintation_Calc(m1,n):
             }
         }
 
+        /*
+        * The function changes the display type of the extra content
+        * None hides the code, while block show it
+        * Also changes the arrow direction.
+        * 
+        * No changes to the variables.
+        */
         function toggleDropdown(event, blockId) {
             event.stopPropagation();
             const block = document.getElementById(`textBlock${blockId}`);
