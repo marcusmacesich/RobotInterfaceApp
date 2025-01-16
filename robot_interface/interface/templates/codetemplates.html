@@ -121,6 +121,66 @@
             color: #777;
             font-size: 14px;
         }
+        /* Functional Block Styles */
+    #functional-block {
+        margin: 20px auto;
+        width: 90%;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    #functional-block h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .functional-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .functional-controls input[type="file"] {
+        padding: 5px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f9f9f9;
+        cursor: pointer;
+    }
+    
+    .functional-controls button {
+        padding: 10px 15px;
+        font-size: 14px;
+        background-color: #1a73e8;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .functional-controls button:hover {
+        background-color: #1669c1;
+    }
+    
+    #output {
+        margin-top: 15px;
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 4px;
+        overflow: auto;
+        max-height: 200px;
+        font-size: 14px;
+        font-family: monospace;
+        color: #333;
+        border: 1px solid #ddd;
+    }
     </style>
 </head>
 <body>
@@ -154,111 +214,31 @@
     <!-- Main Content Container -->
     <div class="container">
         <div class="block-container">
-            <!-- 10 Selectable Text Blocks with Expandable Content -->
-            <div class="text-block" id="textBlock1" onclick="selectBlock(1)">
-                <div class="text-content">Code for Lab 1</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 1)">▲</button>
+            <div id = "append">
+                <!--Content from backend will be populated here-->
             </div>
-            <!-- Move extra-content below each block -->
-            <!-- currently stores temporary code-->
-            <div class="extra-content" id="extraContent1"><code><pre> 
-#GetPositons.py file
-import numpy as np
-import math
-
-def get_pos(polar):
-    if(polar)
-        r = robot.posr
-        theta = robot.posθ
-        phi = robot.posø
-        ret [r, theta, phi]
-    else
-        x = robot.posx
-        y = robot.posy
-        z = robot.posz
-        ret [x, y, z]
-
-def orintation_Calc(m1,n):
-    i = 0
-    mreturn = np.array([0,0])
-    for ø in robot.angles
-        l = robot.length[i]
-        inter = np.array([math.cos(ø),-math.sin(ø)],[math.sin(ø),math.cos(ø)]) @ np.array([1,0])
-        mreturn = mreturn+l*inter
-        if i == n:
-            break
-        i+=1
-
-            </code></pre></div>
-
-            <div class="text-block" id="textBlock2" onclick="selectBlock(2)">
-                <div class="text-content">Code for Lab 2</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 2)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent2">This is additional text for Block 2 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock3" onclick="selectBlock(3)">
-                <div class="text-content">Code for Lab 3</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 3)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent3">This is additional text for Block 3 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock4" onclick="selectBlock(4)">
-                <div class="text-content">Code for Lab 4</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 4)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent4">This is additional text for Block 4 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock5" onclick="selectBlock(5)">
-                <div class="text-content">Code for Lab 5</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 5)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent5">This is additional text for Block 5 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock6" onclick="selectBlock(6)">
-                <div class="text-content">Code for Lab 6</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 6)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent6">This is additional text for Block 6 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock7" onclick="selectBlock(7)">
-                <div class="text-content">Code for Lab 7</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 7)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent10">This is additional text for Block 7 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock8" onclick="selectBlock(8)">
-                <div class="text-content">Code for Lab 8</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 8)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent8">This is additional text for Block 8 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock9" onclick="selectBlock(9)">
-                <div class="text-content">Code for Lab 9</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 9)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent9">This is additional text for Block 9 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock10" onclick="selectBlock(10)">
-                <div class="text-content">Code for Lab 10</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 10)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent10">This is additional text for Block 10 that appears on expansion.</div>
-
-            <!-- Single Copy Button -->
             <button class="copy-button" onclick="copySelectedText()">Copy Selected Text</button>
         </div>
+    </div>
+
+    <div id="functional-block">
+        <h3>Upload python file</h3>
+        <div class="functional-controls">
+            <input type="file" id="inputfile">
+            <button type="button" id="load-to-editor-btn">Load File to Editor</button>
+        </div>
+        <pre id="output"></pre>
     </div>
 
 
     <!-- Footer -->
     <div class="footer">
         <ul class="footers">
-            <li>&copy; 2024 ECE Capstone Team 1. Zero rights reserved.</li>
+            <li>&copy; 2025 ECE Capstone Team 1. Zero rights reserved.</li>
             <li><a href="{% url 'sitemap' %}">Site Map</a></li>
         </ul>
     </div>
-
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         let selectedBlockId = null;
         /*
@@ -318,6 +298,77 @@ def orintation_Calc(m1,n):
                 button.innerHTML = '▼';
             }
         }
+
+        // File input event listener
+        document.getElementById('inputfile').addEventListener('change', function () {
+            let fr = new FileReader();
+            fr.onload = function () {
+                // Display the file content in the output section
+                document.getElementById('output').textContent = fr.result;
+                console.log('File content loaded:', fr.result);
+            };
+            fr.readAsText(this.files[0]);
+        });
+
+        // Button to load file content into the editor
+        document.getElementById('load-to-editor-btn').addEventListener('click', function () {
+            const fileContent = document.getElementById('output').textContent;
+            if (fileContent.trim()) {
+                editor.setValue(fileContent, -1); // Load content into the editor without moving the cursor
+            } else {
+                alert('No file content to load. Please upload a file first.');
+            }
+        });
+
+        //Code that runs on load to populate the site
+        var labs = 0;
+        fetch('/get-template-names/')
+        .then(response => response.text())
+        .then(async (data) => {
+            let lines = data.split('\n');
+            lines = lines.filter((item) => item.length !== 0);
+            
+            for (const element of lines) { // Use a `for...of` loop for sequential processing
+                let fileSeekNames = element.split(":");
+                for (let i = 0; i < fileSeekNames.length; i++) {
+                    if (i % 2 === 1) {
+                        await displayTextFileContent(fileSeekNames[i], fileSeekNames[i - 1]);
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching rules:', error));
+
+        async function displayTextFileContent(fileName, displayName) {
+            const fileContent = await fetchTextFile(fileName); // Wait for the promise to resolve
+            $("#append").append(
+                '<div class="text-block" id="textBlock'+labs+'" onclick="selectBlock(#)">\n'+
+                '<div class="text-content">'+displayName+'</div>\n'+
+                '<button class="dropdown-button" onclick="toggleDropdown(event, '+labs+')">▲</button>\n'+
+                '</div>\n'+
+                '<div class="extra-content" id="extraContent'+labs+'"><pre>\n'+
+                fileContent+
+                '</pre></div>'
+            );
+            labs = labs + 1;
+        }
+
+        async function fetchTextFile(fileName) {
+            return fetch(`/fetch_text_file/?file_name=${encodeURIComponent(fileName)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File not found or error fetching file.');
+                }
+                return response.text();
+            })
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                return error.message;
+            });
+        }
+
     </script>
 
 </body>

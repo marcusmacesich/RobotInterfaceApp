@@ -10,11 +10,15 @@ var janus = null;
 var textroom = null;
 var opaqueId = "textroomtest-"+Janus.randomString(12);
 var consoleElement = '#console';
+
+//This needs to be automatically updated in the future
 var myroom = 1234;	// Demo room
 var myusername = "User";
 var myid = null;
 var participants = {}
 var transactions = {}
+
+//The jquery waits for the site to load before loading janus to try and make it feel snapier
 $(document).ready(function() {
     Janus.init({debug: "all", callback: function() {
         if(!Janus.isWebrtcSupported()) {
@@ -23,6 +27,7 @@ $(document).ready(function() {
         }
         janus = new Janus(
         {
+            //These come from the main page. This needs to be changed in the future to get it from the django server
             server: server,
             iceServers: iceServers,
             success: function()

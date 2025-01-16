@@ -16,5 +16,9 @@ urlpatterns = [
     path('stream', views.stream, name='stream'),
     path('codetemplates/', views.code_templates, name='codetemplates'),
     path('codetemplates/', views.code_templates, name='codetemplates'),
-    path('robot_code/<int:robot_id>/finish_program/', views.finish_program, name='finish_program')
+    path('robot_code/<int:robot_id>/finish_program/', views.finish_program, name='finish_program'),
+    path('manage_templates', views.manage_templates, name='manage_templates'),
+    path('get-template-names/', views.get_template_names, name='get_template_names'),
+    path('fetch_text_file/', views.fetch_text_file, name='fetch_text_file'),
+    path('handle_text_data/', views.handle_text_data, name='handle_text_data')
 ]
