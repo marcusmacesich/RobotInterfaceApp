@@ -321,7 +321,7 @@
         });
 
         //Code that runs on load to populate the site
-        var labs = 0;
+        var labs = 1;
         fetch('/get-template-names/')
         .then(response => response.text())
         .then(async (data) => {
@@ -342,7 +342,7 @@
         async function displayTextFileContent(fileName, displayName) {
             const fileContent = await fetchTextFile(fileName); // Wait for the promise to resolve
             $("#append").append(
-                '<div class="text-block" id="textBlock'+labs+'" onclick="selectBlock(#)">\n'+
+                '<div class="text-block" id="textBlock'+labs+'" onclick="selectBlock('+labs+')">\n'+
                 '<div class="text-content">'+displayName+'</div>\n'+
                 '<button class="dropdown-button" onclick="toggleDropdown(event, '+labs+')">▲</button>\n'+
                 '</div>\n'+
