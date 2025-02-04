@@ -5,6 +5,8 @@
 
 /* global iceServers:readonly, Janus:readonly, server:readonly */
 
+//taken from the streaming.js file from the Janus foundations' demo page 
+
 var janus = null;
 var streaming = null;
 var opaqueId = "streamingtest-"+Janus.randomString(12);

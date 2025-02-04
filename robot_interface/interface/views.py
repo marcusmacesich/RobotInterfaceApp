@@ -223,3 +223,79 @@ def code_templates(request):
 def stream(request):
     # Load the stream page
     return render(request, 'stream.html')
+
+def manage_templates(request):
+    return render(request, 'AddTemplates.html')
+
+def get_template_names(request):
+    with open('./interface/files/CodeTemplates/names.txt', 'r') as file:
+        names = file.read()
+    return HttpResponse(names, content_type="text/plain")
+
+@csrf_exempt
+def handle_text_data(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            text = data.get('text', '')
+
+            # Validate text
+            if not isinstance(text, str):
+                return JsonResponse({'error': 'Invalid input'}, status=400)
+
+            if text[:13] == "templateWrite":
+                try:
+                    write_to_file(text)
+                    return JsonResponse({'status': 'success', 'message': 'Templates updated successfully!'})
+                except Exception as e:
+                    return JsonResponse({'status': 'error', 'message': str(e)})
+            
+            # Process text (e.g., save to the database, etc.)
+            return JsonResponse({'message': 'Data received successfully, no updates to rules or functions'})
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def write_to_file(input_string):
+    # Split the input string by lines
+    lines = input_string.splitlines()
+
+    # Validate that there's at least three lines
+    if len(lines) < 3:
+        raise ValueError("Input format is invalid. At least three lines are required.")
+
+    # Extract the first line, filename, and content
+    header = lines[0]
+    filename = lines[1]
+    content = "\n".join(lines[2:])
+
+    # Validate the header
+    if not header.strip() == "templateWrite":
+        raise ValueError("The first line must be 'templateWrite'.")
+
+    # Check for invalid cases where 'templateWrite' is detected but format is wrong
+    if "templateWrite" in input_string and header.strip() != "templateWrite":
+        raise ValueError("The substring 'templateWrite' is detected but the format is incorrect.")
+
+    # Write content to the file
+    with open('./interface/files/CodeTemplates/'+filename, "w") as file:
+        file.write(content)
+
+    print(f"Content successfully written to {filename}.")
+
+def fetch_text_file(request):
+    # Get the file name from the query parameters
+    file_name = request.GET.get('file_name', '')
+
+    # Create the full path to the file
+    file_path = './interface/files/CodeTemplates/' + file_name
+
+    # Check if the file exists and is safe to access
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return HttpResponse(content, content_type='text/plain')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'File not found or invalid file name.'}, status=404)

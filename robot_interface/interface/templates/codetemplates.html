@@ -121,6 +121,66 @@
             color: #777;
             font-size: 14px;
         }
+        /* Functional Block Styles */
+    #functional-block {
+        margin: 20px auto;
+        width: 90%;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    #functional-block h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .functional-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .functional-controls input[type="file"] {
+        padding: 5px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f9f9f9;
+        cursor: pointer;
+    }
+    
+    .functional-controls button {
+        padding: 10px 15px;
+        font-size: 14px;
+        background-color: #1a73e8;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .functional-controls button:hover {
+        background-color: #1669c1;
+    }
+    
+    #output {
+        margin-top: 15px;
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 4px;
+        overflow: auto;
+        max-height: 200px;
+        font-size: 14px;
+        font-family: monospace;
+        color: #333;
+        border: 1px solid #ddd;
+    }
     </style>
 </head>
 <body>
@@ -130,47 +190,65 @@
         <h1>ECE 6-Axis Programming Interface</h1>
     </div>
 
+    <!--
+        Boiler plate code to create each dropdown block
+
+        <div class="text-block" id="textBlock#" onclick="selectBlock(#)">
+        <div class="text-content">Code for Lab #</div>
+        <button class="dropdown-button" onclick="toggleDropdown(event, #)">▲</button>
+        </div>
+        <div class="extra-content" id="extraContent#"><pre>
+        This is additional text for Block # that appears on expansion.
+        </pre></div>
+    
+        JavaScript handles the logic for displaying the hidden code. 
+        The hidden code is stored in the extra content section.
+        When the copy button is pushed, the code will be copied to the local strorage of the webbrowser under the name codeText as well as the clipboard. 
+        The <pre> and </pre> are not copied, and are used to allow the text in the block to be eaiser to insert in the code. 
+        # is any place when a number should be inserted, and the nuber denotes each block. The number is arbitrary. 1-10 are currently used for consistancy.
+        See toggleDropdowns and selectBlock in the javascript for further details. 
+        
+        Still needs actual code for each block.
+    -->
+
     <!-- Main Content Container -->
     <div class="container">
         <div class="block-container">
-            <!-- 10 Selectable Text Blocks with Expandable Content -->
-            <div class="text-block" id="textBlock1" onclick="selectBlock(1)">
-                <div class="text-content">Large block of text 1 for Block 1</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 1)">▲</button>
+            <div id = "append">
+                <!--Content from backend will be populated here-->
             </div>
-            <!-- Move extra-content below each block -->
-            <div class="extra-content" id="extraContent1">This is additional text for Block 1 that appears on expansion.</div>
-
-            <div class="text-block" id="textBlock2" onclick="selectBlock(2)">
-                <div class="text-content">Large block of text 2 for Block 2</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 2)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent2">This is additional text for Block 2 that appears on expansion.</div>
-
-            <!-- Additional blocks up to textBlock10 -->
-
-            <div class="text-block" id="textBlock10" onclick="selectBlock(10)">
-                <div class="text-content">Large block of text 10 for Block 10</div>
-                <button class="dropdown-button" onclick="toggleDropdown(event, 10)">▲</button>
-            </div>
-            <div class="extra-content" id="extraContent10">This is additional text for Block 10 that appears on expansion.</div>
-
-            <!-- Single Copy Button -->
             <button class="copy-button" onclick="copySelectedText()">Copy Selected Text</button>
         </div>
     </div>
 
+    <div id="functional-block">
+        <h3>Upload python file</h3>
+        <div class="functional-controls">
+            <input type="file" id="inputfile">
+            <button type="button" id="load-to-editor-btn">Load File to Editor</button>
+        </div>
+        <pre id="output"></pre>
+    </div>
+
+
     <!-- Footer -->
     <div class="footer">
         <ul class="footers">
-            <li>&copy; 2024 ECE Capstone Team 1. Zero rights reserved.</li>
+            <li>&copy; 2025 ECE Capstone Team 1. Zero rights reserved.</li>
             <li><a href="{% url 'sitemap' %}">Site Map</a></li>
         </ul>
     </div>
-
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         let selectedBlockId = null;
-
+        /*
+        * Function is called whenever a block is clicked.
+        *
+        * By passing in the blockId as to the function, string manipulation can add and remove the selected tag.
+        * The selectedBlockId is also used in copySelectedText.
+        * 
+        * Updates selectedBlockId to blockId
+        */
         function selectBlock(blockId) {
             if (selectedBlockId) {
                 document.getElementById(`textBlock${selectedBlockId}`).classList.remove('selected');
@@ -179,12 +257,17 @@
             document.getElementById(`textBlock${blockId}`).classList.add('selected');
         }
 
+        /*
+        * Copies the text to the clipboard and to the local storage name codeText.
+        * Takes the text from the selected text box.
+        * 
+        * No changes to the variables. 
+        */
         function copySelectedText() {
             if (selectedBlockId) {
                 const selectedText = document.getElementById(`extraContent${selectedBlockId}`).textContent.trim();
                 navigator.clipboard.writeText(selectedText).then(() => {
                     localStorage.setItem("codeText", selectedText);
-                    console.log(selectedText);
                     alert('Selected text copied to workspace and clipboard!');
                 }).catch(err => {
                     alert('Failed to copy text.');
@@ -194,6 +277,13 @@
             }
         }
 
+        /*
+        * The function changes the display type of the extra content
+        * None hides the code, while block show it
+        * Also changes the arrow direction.
+        * 
+        * No changes to the variables.
+        */
         function toggleDropdown(event, blockId) {
             event.stopPropagation();
             const block = document.getElementById(`textBlock${blockId}`);
@@ -208,6 +298,77 @@
                 button.innerHTML = '▼';
             }
         }
+
+        // File input event listener
+        document.getElementById('inputfile').addEventListener('change', function () {
+            let fr = new FileReader();
+            fr.onload = function () {
+                // Display the file content in the output section
+                document.getElementById('output').textContent = fr.result;
+                console.log('File content loaded:', fr.result);
+            };
+            fr.readAsText(this.files[0]);
+        });
+
+        // Button to load file content into the editor
+        document.getElementById('load-to-editor-btn').addEventListener('click', function () {
+            const fileContent = document.getElementById('output').textContent;
+            if (fileContent.trim()) {
+                editor.setValue(fileContent, -1); // Load content into the editor without moving the cursor
+            } else {
+                alert('No file content to load. Please upload a file first.');
+            }
+        });
+
+        //Code that runs on load to populate the site
+        var labs = 1;
+        fetch('/get-template-names/')
+        .then(response => response.text())
+        .then(async (data) => {
+            let lines = data.split('\n');
+            lines = lines.filter((item) => item.length !== 0);
+            
+            for (const element of lines) { // Use a `for...of` loop for sequential processing
+                let fileSeekNames = element.split(":");
+                for (let i = 0; i < fileSeekNames.length; i++) {
+                    if (i % 2 === 1) {
+                        await displayTextFileContent(fileSeekNames[i], fileSeekNames[i - 1]);
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching rules:', error));
+
+        async function displayTextFileContent(fileName, displayName) {
+            const fileContent = await fetchTextFile(fileName); // Wait for the promise to resolve
+            $("#append").append(
+                '<div class="text-block" id="textBlock'+labs+'" onclick="selectBlock('+labs+')">\n'+
+                '<div class="text-content">'+displayName+'</div>\n'+
+                '<button class="dropdown-button" onclick="toggleDropdown(event, '+labs+')">▲</button>\n'+
+                '</div>\n'+
+                '<div class="extra-content" id="extraContent'+labs+'"><pre>\n'+
+                fileContent+
+                '</pre></div>'
+            );
+            labs = labs + 1;
+        }
+
+        async function fetchTextFile(fileName) {
+            return fetch(`/fetch_text_file/?file_name=${encodeURIComponent(fileName)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File not found or error fetching file.');
+                }
+                return response.text();
+            })
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                return error.message;
+            });
+        }
+
     </script>
 
 </body>
