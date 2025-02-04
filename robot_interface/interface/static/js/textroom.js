@@ -1,6 +1,6 @@
 //192.168.0.162
 //172.28.123.183
-const server = "http://172.28.123.183:8088/janus";
+const server = "http://172.31.82.170:8088/janus";
 const iceServers = [{ urls: "stun:stun.l.google.com:19302" }]; // Example STUN server, modify as needed
 const sessionData = { session_id: null, plugin_id: null };
 var janus = null;

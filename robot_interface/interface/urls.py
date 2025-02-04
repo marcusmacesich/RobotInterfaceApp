@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -16,5 +16,6 @@ urlpatterns = [
     path('stream', views.stream, name='stream'),
     path('codetemplates/', views.code_templates, name='codetemplates'),
     path('codetemplates/', views.code_templates, name='codetemplates'),
-    path('robot_code/<int:robot_id>/finish_program/', views.finish_program, name='finish_program')
+    path('robot_code/<int:robot_id>/finish_program/', views.finish_program, name='finish_program'),
+    path("accounts/", include("django.contrib.auth.urls"))
 ]
