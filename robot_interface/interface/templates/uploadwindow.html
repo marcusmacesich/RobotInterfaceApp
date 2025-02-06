@@ -102,9 +102,12 @@
 <!--
     The imports needed to make the console and video feed from the pi work.
 -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"></script>
     <script>{% load static %}</script>
+    <!--Jquery import-->
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <!--Bootstrap import-->
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
     <!--janus.ja and adapter.js are both needed and taken directly from the janus page.-->>
     <script src="{% static 'js/janus.js' %}"></script>
     <script src="{% static 'js/adapter.js' %}"></script>

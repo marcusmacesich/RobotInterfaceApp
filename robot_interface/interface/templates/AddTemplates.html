@@ -5,7 +5,6 @@
         <meta name="csrf-token" content="{{ csrf_token }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Viewer for limits</title>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <style>
             .appended-element {
                 border-top: 2px solid #888; /* Horizontal line on top */
@@ -26,7 +25,8 @@
             <button onclick="appendElement()">Add File</button>
         </div>
         <div id="outputContainer"></div>
-
+    <script>{% load static %}</script>
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
     <script>
         // Declare global arrays
         let names = []; // Global array for names of files
