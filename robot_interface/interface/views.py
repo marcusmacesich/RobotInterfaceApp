@@ -6,6 +6,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 
+#Diffrent IPs used to test. Will eventually need to get the server and ice server variables from the DJango server automatically.
+#172.28.123.183 Dreese lab ip
+#172.27.52.190 Scott lab ip
+ip_address = "172.27.52.190" 
+stun_server = "stun:stun.l.google.com:19302"
+
 def interface(request):
     # Load the editor interface page
     return render(request, 'idewindow.html')
@@ -53,7 +59,7 @@ def upload_page(request, program_id):
     except Program.DoesNotExist:
         program = None
 
-    return render(request, 'uploadwindow.html', {'status': status, 'program': program})
+    return render(request, 'uploadwindow.html', {'status': status, 'program': program, 'ip_address': ip_address,'stun_server': stun_server})
 
 def prepare_save(request):
     if request.method == 'POST':
@@ -222,6 +228,10 @@ def code_templates(request):
 
 def stream(request):
     # Load the stream page
+    context = {
+        'ip_address': ip_address,
+        'stun_server': stun_server,
+    }
     return render(request, 'stream.html')
 
 def manage_templates(request):

@@ -161,8 +161,8 @@
     </style>
     <!-- Needed to intilize the server ip and the server connectivity, variablses are named as janus.js needs them -->
     <script>
-        const server = "http://172.31.82.170:8088/janus"; // Replace with your Janus server address
-        const iceServers = [{ urls: "stun:stun.l.google.com:19302" }]; // Example STUN server, modify as needed
+        const server = "http://{{ ip_address }}:8088/janus";
+        const iceServers = [{ urls: "{{ stun_server }}" }];
     </script>
     <script>{% load static %}</script>
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
