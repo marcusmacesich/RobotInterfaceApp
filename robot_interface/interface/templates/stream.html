@@ -7,9 +7,6 @@
     <title>Stream Viewer</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
-    <!-- Bootstrap -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"></script>
     <style>
         /* Reset and Common Styles */
         * {
@@ -168,6 +165,8 @@
         const iceServers = [{ urls: "stun:stun.l.google.com:19302" }]; // Example STUN server, modify as needed
     </script>
     <script>{% load static %}</script>
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
     <script src="{% static 'js/adapter.js' %}"></script>
     <script src="{% static 'js/janus.js' %}"></script>
     <script src="{% static 'js/streaming.js' %}"></script>

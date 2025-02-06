@@ -314,7 +314,12 @@
         document.getElementById('load-to-editor-btn').addEventListener('click', function () {
             const fileContent = document.getElementById('output').textContent;
             if (fileContent.trim()) {
-                editor.setValue(fileContent, -1); // Load content into the editor without moving the cursor
+                navigator.clipboard.writeText(fileContent.trim()).then(() => {
+                    localStorage.setItem("codeText", fileContent.trim());
+                    alert('Uploaded code added to workspace and clipboard!');
+                }).catch(err => {
+                    alert('Failed to copy text.');
+                });
             } else {
                 alert('No file content to load. Please upload a file first.');
             }
