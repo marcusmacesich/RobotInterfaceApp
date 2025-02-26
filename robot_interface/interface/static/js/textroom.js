@@ -1,10 +1,4 @@
 //taken from the textroom.js file from the Janus foundations' demo page 
-
-//Diffrent IPs used to test. Will eventually need to get the server and ice server variables from the DJango server automatically.
-//192.168.0.162
-//172.28.123.183
-const server = "http://172.31.82.170:8088/janus";
-const iceServers = [{ urls: "stun:stun.l.google.com:19302" }]; // Example STUN server, modify as needed
 const sessionData = { session_id: null, plugin_id: null };
 var janus = null;
 var textroom = null;
