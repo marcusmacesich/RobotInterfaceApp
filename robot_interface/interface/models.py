@@ -20,3 +20,11 @@ class Program(models.Model):
 
     def __str__(self):
         return f"{self.student.username}'s program for {self.robot.name}"
+
+
+class Functions(models.Model):
+    func_name = models.TextField(max_length=100)
+    func_description = models.TextField(max_length=250)
+
+    def __str__(self):
+        return self.func_name

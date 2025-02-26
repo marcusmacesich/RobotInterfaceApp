@@ -1,14 +1,17 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import Robot, Program
+from .models import Robot, Program, Functions
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 
 def interface(request):
+    
+    # Get all of the function objects for code blocks
+    functions = Functions.objects.all()
     # Load the editor interface page
-    return render(request, 'idewindow.html')
+    return render(request, 'idewindow.html', {'functions': functions})
 
 def upload_program(request):
     if request.method == 'POST':
