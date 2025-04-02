@@ -233,7 +233,7 @@ def stream(request):
         'ip_address': ip_address,
         'stun_server': stun_server,
     }
-    return render(request, 'stream.html')
+    return render(request, 'stream.html', context)
 
 def manage_templates(request):
     return render(request, 'AddTemplates.html')
