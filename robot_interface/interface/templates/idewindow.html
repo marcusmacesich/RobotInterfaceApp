@@ -244,20 +244,27 @@
         // Save button event
         document.getElementById('save-btn').addEventListener('click', function() {
             var code = editor.getValue();
+
+            // Create form, to submit code and selected robot
             var form = document.createElement('form');
             form.method = 'post';
             form.action = '{% url "prepare_save_program" %}';
             form.style.display = 'none';
+
+            // Add CSRF token
             var csrfTokenInput = document.createElement('input');
             csrfTokenInput.type = 'hidden';
             csrfTokenInput.name = 'csrfmiddlewaretoken';
             csrfTokenInput.value = '{{ csrf_token }}';
             form.appendChild(csrfTokenInput);
+
+            // Add code input
             var codeInput = document.createElement('input');
             codeInput.type = 'hidden';
             codeInput.name = 'code';
             codeInput.value = code;
             form.appendChild(codeInput);
+
             document.body.appendChild(form);
             form.submit();
         });
@@ -272,7 +279,7 @@
         if(txt && txt.localeCompare("") !== 0){
             editor.setValue(txt);
         } else {
-            editor.setValue("// Write your code here");
+            editor.setValue("# Write your code here");
         }
 
         function setPersistant(key, value) {

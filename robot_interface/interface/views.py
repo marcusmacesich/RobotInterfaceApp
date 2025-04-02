@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse, Http404
 from django.template import loader
-from .models import Robot, Program, Functions
+from .models import Robot, Program, Functions, SavedProgram, WebSocketIP
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
@@ -12,6 +12,10 @@ import json
 ip_address = "172.27.52.190" 
 stun_server = "stun:stun.l.google.com:19302"
 
+# Retrieves the IP address that the websockets server is running on from the DB
+web_ip_address = WebSocketIP.objects.first()
+
+# Function to load the HTML of the IDE page
 def interface(request):
     
     # Get all of the function objects for code blocks
@@ -19,6 +23,7 @@ def interface(request):
     # Load the editor interface page
     return render(request, 'idewindow.html', {'functions': functions})
 
+# Function to handle when the 'Upload' button is pressed
 def upload_program(request):
     if request.method == 'POST':
         code = request.POST.get('code')
@@ -42,8 +47,6 @@ def upload_program(request):
             code=code,
             status='Waiting'
         )
-        # place holder for passing through error message
-        # error_message = None
 
         # Success message
         request.session['upload_status'] = 'Program uploaded successfully'
@@ -51,6 +54,7 @@ def upload_program(request):
     else:
         return redirect('interface')
 
+# Function to render the upload page with console and control buttons 
 def upload_page(request, program_id):
     status = request.session.get('upload_status', '')
 
@@ -62,34 +66,29 @@ def upload_page(request, program_id):
     except Program.DoesNotExist:
         program = None
 
-    return render(request, 'uploadwindow.html', {'status': status, 'program': program, 'ip_address': ip_address,'stun_server': stun_server})
+    return render(request, 'uploadwindow.html', {'status': status, 'program': program, 'ip_address': ip_address,'stun_server': stun_server, 'web_ip_address': web_ip_address})
 
+# Function to begin the save process
 def prepare_save(request):
     if request.method == 'POST':
         code = request.POST.get('code')
-        # Store the code in session or pass via context
+
+        # Store the code
         request.session['code_to_save'] = code
         return redirect('save_program')
     else:
         return redirect('interface')
 
+# Function to save the program and send you back to the interface page
 def save_program(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
         program_name = request.POST.get('program_name')
         code = request.session.get('code_to_save', '')
 
-        # Logic to save the program to database in future
-        # new_program = Program.objects.create(
-        #     username=username,
-        #     program_name=program_name,
-        #     code=code
-        # )
-
         # Logic to save the program to database
-        Program.objects.create(
+        SavedProgram.objects.create(
+            program_name=program_name,
             student=request.user,
-            robot=Robot.objects.get(name=program_name),  # Adjust as needed
             code=code
         )
 
@@ -104,6 +103,7 @@ def save_program(request):
             return redirect('interface')
         return render(request, 'savewindow.html', {'code': code})
 
+# Updates program status to 'Run' when start is pressed 
 #@csrf_exempt
 def start_program(request, robot_id):
     if request.method == 'POST':
@@ -125,6 +125,7 @@ def start_program(request, robot_id):
     else:
         return HttpResponse('Invalid request method', status=405)
 
+# Updated program status to 'Stop' when stop button is pressed
 def stop_program(request, robot_id):
     if request.method == 'POST':
         # Parse JSON data from the request body
@@ -145,6 +146,7 @@ def stop_program(request, robot_id):
     else:
         return HttpResponse('Invalid request method', status=405)
         
+# Updated the program status back to 'Waiting' when Requeue is pressed
 def requeue_program(request, robot_id):
     if request.method == 'POST':
         # Parse JSON data from the request body
@@ -165,7 +167,7 @@ def requeue_program(request, robot_id):
     else:
         return HttpResponse('Invalid request method', status=405)
         
-
+# Old function that posts code to a URL rather than using a websocket
 def robot_get_code(request, robot_id):
     # The robot will request this URL with its robot_id
     try:
@@ -184,20 +186,16 @@ def robot_get_code(request, robot_id):
     }
     return JsonResponse(data)
 
-def robot_exec_status(request, robot_id):
-
+# Posts a given programs execution status to a URL for the robot
+def robot_exec_status(request, robot_id, program_id):
     try:
-        robot = Robot.objects.get(id=robot_id)
-    except Robot.DoesNotExist:
-        return HttpResponse('Robot Not Found', status=404)
+        program = Program.objects.get(id=program_id, robot__id=robot_id, status__in=['Waiting', 'Run', 'Stop'])
+    except Program.DoesNotExist:
+        return HttpResponse('Program Not Found', status=404)
 
-    program = Program.objects.filter(robot=robot, status__in=['Waiting', 'Run', 'Stop']).order_by('-upload_time').first()
+    return HttpResponse(program.status, content_type='text/plain')
 
-    if program is None:
-        return HttpResponse('No Status Available', status=404)
-
-    return(HttpResponse(program.status, content_type='text/plain'))
-
+# Allows the robot to set the status of a program to 'Finished'
 @csrf_exempt
 def finish_program(request, robot_id):
     if request.method == 'POST':
@@ -312,3 +310,21 @@ def fetch_text_file(request):
         return HttpResponse(content, content_type='text/plain')
     except json.JSONDecodeError:
         return JsonResponse({'error': 'File not found or invalid file name.'}, status=404)
+
+# Opens a new tab with the lab pdf
+def lab_view(request, lab_id):
+
+    lab_number = lab_id
+
+    try:
+        return FileResponse(open(f'./interface/files/labs/lab{lab_number}.pdf', 'rb'), content_type='application/pdf')
+    except FileNotFoundError:
+        raise Http404()
+
+# Lists all of the labs with buttons to retrieve them
+def lab_list(request):
+
+    #labs = labs.Objects.all()
+
+    return render(request, 'lablist.html')
+

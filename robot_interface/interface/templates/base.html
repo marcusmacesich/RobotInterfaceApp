@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}ECE 6-Axis Programming Interface{% endblock %}</title>
+    <!-- Include Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and common styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #a7b1b7;
+            color: #333;
+        }
+        .navbar {
+            background-color: #ba0c2f;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+        .navbar h1 { font-size: 24px; font-weight: 500; }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1a73e8;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .btn:hover { background-color: #1669c1; }
+        /* Additional common styles */
+    </style>
+    {% block extra_head %}
+    <!-- Additional head elements for child templates -->
+    {% endblock %}
+</head>
+<body>
+    <div class="navbar">
+        <h1>ECE 6-Axis Programming Interface</h1>
+    </div>
+
+    {% if user.is_authenticated %}
+        {% block content %}
+        <!-- Authenticated content from child templates -->
+        {% endblock %}
+    {% else %}
+        <div class="container">
+            <h2>You are not logged in</h2>
+            <a href="{% url 'login' %}" class="btn">Log In</a>
+        </div>
+    {% endif %}
+
+    {% block extra_scripts %}
+    <!-- Additional scripts for child templates -->
+    {% endblock %}
+</body>
+</html>

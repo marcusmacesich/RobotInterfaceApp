@@ -14,6 +14,26 @@ class RobotConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         # Remove this connection from the group
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def receive(self, text_data):
+        """
+        This method is called when a message is received on this WebSocket connection.
+        We assume that messages sent from the robot script include an "output" key.
+        """
+        try:
+            data = json.loads(text_data)
+            output = data.get("output")
+            if output:
+                # Broadcast this output to the group so all connected clients get it.
+                await self.channel_layer.group_send(
+                    self.group_name,
+                    {
+                        'type': 'execution_output',
+                        'output': output,
+                    }
+                )
+        except Exception as e:
+            print("Error in receive:", e)
     
     # This handler is triggered by messages sent to the group
     async def new_program(self, event):
@@ -25,4 +45,11 @@ class RobotConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'program_id': program_id,
             'code': code,
+        }))
+
+    async def execution_output(self, event):
+        # Handler for execution output messages
+        output = event['output']
+        await self.send(text_data=json.dumps({
+            'output': output,
         }))

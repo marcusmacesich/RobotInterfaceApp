@@ -289,12 +289,47 @@
             console.error('Stop button not found');
         }
 
-        // Placeholder: Simulate an error message
-        /*
-        setTimeout(function() {
-            appendToConsole('Error: Failed to upload program to robot.', 'error');
-        }, 2000);
-        */
+        var wsTrig = 1;
+
+        // Only open the WebSocket if a program exists
+        {% if program %}
+            if (wsTrig == 1) {
+
+                // Construct the WebSocket URL
+                var wsURL = "ws://{{ web_ip_address }}:8001/ws/robot/{{ program.robot.id }}/";
+                appendToConsole(wsURL);
+                var consoleSocket = new WebSocket(wsURL);
+
+                consoleSocket.onopen = function() {
+                    appendToConsole("Connected to robot console...", "info");
+                };
+
+                consoleSocket.onmessage = function(event) {
+                    console.log("Websocket message received:", event.data);
+                    try {
+                        var data = JSON.parse(event.data);
+                        if (data.output) {
+                            appendToConsole(data.output, "info");
+                        } else {
+                            console.log("Message has no 'output' key:", data);
+                        }
+                    } catch (e) {
+                        appendToConsole("Error parsing console message: " + e, "error");
+                    }
+                };
+
+                consoleSocket.onerror = function(error) {
+                    appendToConsole("WebSocket error: " + error, "error");
+                };
+
+                consoleSocket.onclose = function() {
+                    appendToConsole("Console connection closed.", "error");
+                };
+
+            }
+        {% endif %}
+
+
     </script>
 
 </body>
