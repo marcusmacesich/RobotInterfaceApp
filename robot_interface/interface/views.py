@@ -22,7 +22,11 @@ def interface(request):
     
     # Get all of the function objects for code blocks
     functions = Functions.objects.all()
-    saved_programs = SavedProgram.objects.filter(student=request.user)
+
+    if request.user.is_authenticated:
+        saved_programs = SavedProgram.objects.filter(student=request.user)
+    else:
+        saved_programs = None
     # Load the editor interface page
     return render(request, 'idewindow.html', {'functions': functions, 'saved_programs': saved_programs})
 
@@ -82,29 +86,46 @@ def prepare_save(request):
     else:
         return redirect('interface')
 
-# Function to save the program and send you back to the interface page
 def save_program(request):
     if request.method == 'POST':
-        program_name = request.POST.get('program_name')
+        action = request.POST.get('action')
         code = request.session.get('code_to_save', '')
 
-        # Logic to save the program to database
-        SavedProgram.objects.create(
-            program_name=program_name,
-            student=request.user,
-            code=code
-        )
+        if action == 'overwrite':
+            # Get the ID of the program selected for overwriting
+            existing_program_id = request.POST.get('existing_program')
+            if existing_program_id:
+                # Ensure that the selected program belongs to the user
+                try:
+                    saved_program = SavedProgram.objects.get(id=existing_program_id, student=request.user)
+                    saved_program.code = code
+                    saved_program.save()
+                except SavedProgram.DoesNotExist:
+                    # Handle case if the program does not exist (or doesn't belong to the user)
+                    # You can add error messaging or simply redirect
+                    return redirect('save_program')
+            else:
+                # Optionally, add a message or redirect if no selection was made
+                return redirect('save_program')
+        else:  # action == 'save_new'
+            # Use the program name from the text input for a new saved program
+            program_name = request.POST.get('program_name')
+            SavedProgram.objects.create(
+                program_name=program_name,
+                student=request.user,
+                code=code
+            )
 
-        # Clear code from session
+        # Clear the code from session and redirect to the interface
         request.session['code_to_save'] = ''
-
-        # Redirect to editor
         return redirect('interface')
     else:
         code = request.session.get('code_to_save', '')
         if not code:
             return redirect('interface')
-        return render(request, 'savewindow.html', {'code': code})
+        # Fetch the user's saved programs to populate the dropdown
+        saved_programs = SavedProgram.objects.filter(student=request.user)
+        return render(request, 'savewindow.html', {'code': code, 'saved_programs': saved_programs})
 
 # Updates program status to 'Run' when start is pressed 
 #@csrf_exempt

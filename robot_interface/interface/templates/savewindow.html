@@ -68,6 +68,7 @@
         .form-container button {
             width: 100%;
             padding: 12px;
+            margin-bottom: 10px;
             font-size: 16px;
             font-weight: 500;
             color: #fff;
@@ -102,13 +103,32 @@
             <h2>Save Your Program</h2>
             <form id="save-form" method="post" action="{% url 'save_program' %}">
                 {% csrf_token %}
+                <!-- Section for saving as a new program -->
                 <div class="form-group">
-                    <label for="program-name">Program Name:</label>
-                    <input type="text" id="program-name" name="program_name" required>
+                    <label for="program-name">New Program Name:</label>
+                    <input type="text" id="program-name" name="program_name">
                 </div>
+
+                
+
                 <!-- Hidden input to store the code -->
                 <input type="hidden" id="code-input" name="code" value="{{ code|escapejs }}">
-                <button type="submit">Save Program</button>
+
+                <!-- Action buttons -->
+                <button type="submit" name="action" value="save_new">Save as New</button>
+
+                <!-- Section for overwriting an existing program -->
+                <div class="form-group">
+                    <label for="existing-program">Overwrite Existing Program:</label>
+                    <select name="existing_program" id="existing-program">
+                        <option value="">-- Select a program --</option>
+                        {% for program in saved_programs %}
+                            <option value="{{ program.id }}">{{ program.program_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" name="action" value="overwrite">Overwrite Selected</button>
             </form>
         </div>
     </div>
