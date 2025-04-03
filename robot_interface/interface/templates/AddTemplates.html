@@ -10,6 +10,16 @@
                 border-top: 2px solid #888; /* Horizontal line on top */
                 padding-top: 10px;           /* Some space above the text */
                 margin-top: 10px;            /* Some space between elements */
+                display: flex;                 /* Use flexbox to align items in a row */
+                justify-content: space-between; /* Space out items along the row */
+                align-items: start;            /* Align items to the start of the container */
+            }
+            .appended-element > div {
+                flex-grow: 1; /* Allow text content to grow and take available space */
+            }
+            .appended-element button {
+                flex-shrink: 0; /* Prevent buttons from shrinking */
+                margin-left: 10px; /* Add some space between text and buttons */
             }
         </style>
     </head>
@@ -41,6 +51,7 @@
         const fileNameDisplay = document.getElementById('fileNameDisplay');
         const uploadButton = document.getElementById('uploadButton');
         const customNameInput = document.getElementById('customName');
+        const outputContainer = document.getElementById('outputContainer');
 
         /*
         * Listener for when a file is uploaded to the page
@@ -72,7 +83,7 @@
         });
 
         /*
-        *Function takes in the content that the user can add in the page and adds it to the 
+        *Function takes in the content that the user can add in the page and adds it to the
         *list as well as the files stored on the django server
         */
         function appendElement() {
@@ -88,42 +99,59 @@
             }
             else{
                 let output  = "Name of file: " + currentFileName + "|" + "Display name on templates: "+filename;
-                let write = "templateWrite\n"+currentFileName+"\n"+currentUploadedCode;
+                let write = "templateWrite\n"+currentFileName+"\n"+filename+"\n"+currentUploadedCode;
+                const fname = currentFileName;
                 sendDataToDjango(write);
                 fetch('/get-template-names/')
                 .then(response => response.text())
                 .then(data => {
-                    let write2 = "templateWrite\nnames.txt\n"+data+"\n"+filename+":"+currentFileName;
+                    let write2 = "namesWrite\nnames.txt\n"+data+filename+":"+fname+"\n";
                     sendDataToDjango(write2);
                 })
                 .catch(error => console.error('Error fetching rules:', error));
-                appendText(output,true);
+                appendText(output,true, currentFileName, filename); // Pass filename and display name
                 //console.log(output);
+                currentUploadedCode = ""; // Clear currentUploadedCode after appending
+                currentFileName = ""; // Clear currentFileName after appending
+                fileNameDisplay.textContent = 'No file selected.'; // Reset file display
+                fileInput.value = ''; // Clear file input
+                customNameInput.value = ''; // Clear custom name input
             }
         }
 
         /*
         * Takes in text to be added to the list on the page and
-        * a parameter to add a revealable element if code is being added. 
+        * a parameter to add a revealable element if code is being added.
         */
-        function appendText(text,code) {
+        function appendText(text, code, filename, displayName) { // Added filename and displayName parameters
             if (text.trim() !== "") {
-                const newElement = document.createElement('p');
+                const newElement = document.createElement('div'); // Changed to div for flexbox layout
+                let textContainer = document.createElement('div'); // Container for text
                 let items = text.split('|');
                 items.forEach(item => {
                     const innerElement = document.createElement('p');
                     innerElement.textContent = item.trim();
-                    newElement.appendChild(innerElement);
+                    textContainer.appendChild(innerElement);
                 });
+
                 if(code){
-                    $(newElement).append(
+                    $(textContainer).append(
                         '<button onclick="ToggleCode('+numberOfCodeElements+')">Show Code</button>'
                     );
-                    $(newElement).append(
+                    $(textContainer).append(
                         '<div id="code'+numberOfCodeElements+'" style="display: none;"><pre>'+currentUploadedCode+'</pre></div>'
                     );
                     numberOfCodeElements = numberOfCodeElements + 1;
                 }
+
+                newElement.appendChild(textContainer); // Append text container to the main element
+
+                // Add remove button
+                let removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.onclick = function() { removeElement(filename, displayName, newElement); }; // Pass filename and displayName
+                newElement.appendChild(removeButton);
+
                 newElement.classList.add('appended-element');
                 document.getElementById('outputContainer').appendChild(newElement);
             }
@@ -142,13 +170,39 @@
             }
         }
 
+        /*
+        * Function to remove an element from the list and send remove command to backend
+        */
+        function removeElement(filename, displayName, elementToRemove) { // Added displayName and elementToRemove parameters
+            let remove = "templateRemove\n" + filename;
+            sendDataToDjango(remove);
+
+            fetch('/get-template-names/')
+            .then(response => response.text())
+            .then(data => {
+                // Remove the entry from names.txt in backend.
+                // Assuming names.txt format is "displayName:filename" per line
+                let lines = data.split('\n');
+                lines = lines.filter(line => line !== `${displayName}:${filename}` && line.trim() !== ''); // Filter out the line to remove and empty lines
+                let updatedNamesContent = lines.join('\n');
+                let writeNames = "namesWrite\nnames.txt\n" + updatedNamesContent;
+                sendDataToDjango(writeNames);
+            })
+            .catch(error => console.error('Error fetching names:', error));
+
+
+            // Remove the element from the display
+            outputContainer.removeChild(elementToRemove);
+        }
+
+
         function getCsrfToken() {
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         }
 
         async function sendDataToDjango(data) {
             const csrfToken = getCsrfToken();
-        
+
             const response = await fetch('/handle_text_data/', {
                 method: 'POST',
                 headers: {
@@ -157,11 +211,11 @@
                 },
                 body: JSON.stringify({ text: data })
             });
-        
+
             if (!response.ok) {
                 throw new Error('Failed to send data to the server');
             }
-        
+
             const responseData = await response.json();
             console.log(responseData);
             return responseData;
@@ -188,7 +242,7 @@
             //console.log(fileContent); // Logs the fetched file content or error
             currentUploadedCode = fileContent;
             let output  = "Name of file: " + fileName + "|" + "Display name on templates: "+displayName;
-            appendText(output,true);
+            appendText(output,true, fileName, displayName); // Pass filename and display name
         }
 
         fetch('/get-template-names/')
@@ -196,7 +250,7 @@
         .then(async (data) => {
             let lines = data.split('\n');
             lines = lines.filter((item) => item.length !== 0);
-            
+
             for (const element of lines) { // Use a `for...of` loop for sequential processing
                 let fileSeekNames = element.split(":");
                 for (let i = 0; i < fileSeekNames.length; i++) {
