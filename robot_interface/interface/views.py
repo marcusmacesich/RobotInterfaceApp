@@ -249,7 +249,6 @@ def handle_text_data(request):
         try:
             data = json.loads(request.body)
             text = data.get('text', '')
-
             # Validate text
             if not isinstance(text, str):
                 return JsonResponse({'error': 'Invalid input'}, status=400)
@@ -257,10 +256,41 @@ def handle_text_data(request):
             if text[:13] == "templateWrite":
                 try:
                     write_to_file(text)
+
                     return JsonResponse({'status': 'success', 'message': 'Templates updated successfully!'})
                 except Exception as e:
                     return JsonResponse({'status': 'error', 'message': str(e)})
-            
+
+            if text[:14] == "templateRemove":
+                try:
+                    remove_file(text)
+
+                    return JsonResponse({'status': 'success', 'message': 'Templates updated successfully!'})
+                except Exception as e:
+                    return JsonResponse({'status': 'error', 'message': str(e)})
+                
+            if text[:10] == "namesWrite":
+                try:
+                    lines = text.splitlines()
+                    filename = lines[1]
+                    content="\n".join(lines[2:])
+                    with open('./interface/files/CodeTemplates/'+filename, "w") as file:
+                        file.write(content)
+                    return JsonResponse({'status': 'success', 'message': 'Names file updated successfully!'})
+                except Exception as e:
+                    return JsonResponse({'status': 'error', 'message': str(e)})
+                
+            if text[:11] == "namesRemove":
+                try:
+                    lines = text.splitlines()
+                    filename = lines[1]
+                    content="\n".join(lines[2:])
+                    with open('./interface/files/CodeTemplates/'+filename, "w") as file:
+                        file.write(content)
+                    return JsonResponse({'status': 'success', 'message': 'Names file updated successfully!'})
+                except Exception as e:
+                    return JsonResponse({'status': 'error', 'message': str(e)})
+                
             # Process text (e.g., save to the database, etc.)
             return JsonResponse({'message': 'Data received successfully, no updates to rules or functions'})
 
@@ -280,7 +310,8 @@ def write_to_file(input_string):
     # Extract the first line, filename, and content
     header = lines[0]
     filename = lines[1]
-    content = "\n".join(lines[2:])
+    displayname = lines[2]
+    content = "\n".join(lines[3:])
 
     # Validate the header
     if not header.strip() == "templateWrite":
@@ -294,6 +325,8 @@ def write_to_file(input_string):
     with open('./interface/files/CodeTemplates/'+filename, "w") as file:
         file.write(content)
 
+    new_item = code_templates.objects.create(name=filename, description=f"{displayname}", value=content)
+    print(f"Created item with ID: {new_item.id}")
     print(f"Content successfully written to {filename}.")
 
 def fetch_text_file(request):
@@ -310,6 +343,30 @@ def fetch_text_file(request):
         return HttpResponse(content, content_type='text/plain')
     except json.JSONDecodeError:
         return JsonResponse({'error': 'File not found or invalid file name.'}, status=404)
+
+
+def remove_file(input_string):
+    lines = input_string.split()
+    prompt = lines[0]
+    name_to_delete = lines[1]
+    flag = False
+    all_items = code_templates.objects.all()
+    for item in all_items:
+        if [all_strings for all_strings in input_string.split() if "delete_all" in all_strings]:
+            item.delete()
+            file_path = f'./interface/files/CodeTemplates/{item.name}'
+            os.remove(file_path)
+        if item.name == name_to_delete:
+            try:
+                item.delete()
+                file_path = f'./interface/files/CodeTemplates/{name_to_delete}'
+                os.remove(file_path)
+                flag = True
+                print(f"Item {item.name} deleted successfully.")
+            except code_templates.DoesNotExist:
+                print(f"Item {name_to_delete} was not deleted.")
+    if not flag:
+        print(f"Item {name_to_delete} not found for deletion.")
 
 # Opens a new tab with the lab pdf
 def lab_view(request, lab_id):
