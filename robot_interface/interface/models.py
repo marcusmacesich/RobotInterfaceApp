@@ -47,3 +47,13 @@ class WebSocketIP(models.Model):
 
     def __str__(self):
         return self.web_ip_address
+
+class code_templates(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True) # Optional description
+    value = models.TextField(default="")
+    created_at = models.DateTimeField(auto_now_add=True) # Automatically set on creation
+    updated_at = models.DateTimeField(auto_now=True)     # Automatically updated on save
+
+    def __str__(self):
+        return self.name # For a readable representation in the admin and shell
