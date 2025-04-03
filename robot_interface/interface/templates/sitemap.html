@@ -71,7 +71,8 @@
     <div class="navbar">
         <h1>ECE 6-Axis Programming Interface - Site Map</h1>
     </div>
-
+    {% if user.is_authenticated %}
+        {% block content %}
     <!-- Main Content Container -->
     <div class="container">
 
@@ -84,7 +85,13 @@
             </ul>
         </div>
     </div>
-
+    {% endblock %}
+    {% else %}
+        <div class="container">
+            <h2>You are not logged in</h2>
+            <a href="{% url 'login' %}" class="btn">Log In</a>
+        </div>
+    {% endif %}
     <!-- Footer -->
     <div class="footer">
         &copy; 2024 ECE Capstone Team 1. Zero rights reserved.

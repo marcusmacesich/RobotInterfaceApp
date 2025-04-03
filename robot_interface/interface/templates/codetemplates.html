@@ -181,15 +181,41 @@
         color: #333;
         border: 1px solid #ddd;
     }
+    .button-link {
+            display: inline-block;          /* Make it behave like a button in terms of layout */
+            padding: 8px 20px;             /* Add padding for button appearance */
+            background-color: #1a73e8;    /* Green background (example) */
+            color: white;                 /* White text color */
+            text-align: center;             /* Center text */
+            text-decoration: none;          /* Remove underline from link */
+            border: none;                   /* Remove default border */
+            border-radius: 4px;             /* Rounded corners (optional) */
+            cursor: pointer;                /* Change cursor to pointer on hover */
+            font-size: 16px;                /* Adjust font size */
+        }   
+
+        .button-link:hover {
+            background-color: #1669c1;
+        }   
+        .links {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            text-align: left;
+            padding: 8px 15px;
+        }
     </style>
 </head>
 <body>
-
     <!-- Navigation Bar -->
     <div class="navbar">
         <h1>ECE 6-Axis Programming Interface</h1>
     </div>
-
+    {% if user.is_authenticated %}
+        {% block content %}
+        <div class="links">
+            <a id="to-code-templates" href="{% url 'interface' %}" class="button-link">Main Page</a>
+        </div>
     <!--
         Boiler plate code to create each dropdown block
 
@@ -238,6 +264,13 @@
             <li><a href="{% url 'sitemap' %}">Site Map</a></li>
         </ul>
     </div>
+    {% endblock %}
+    {% else %}
+        <div class="container">
+            <h2>You are not logged in</h2>
+            <a href="{% url 'login' %}" class="btn">Log In</a>
+        </div>
+    {% endif %}
     <script>{% load static %}</script>
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
     <script>

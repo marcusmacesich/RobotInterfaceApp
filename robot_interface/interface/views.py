@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, FileResponse, Http404
+from interface.models import code_templates
 from django.template import loader
 from .models import Robot, Program, Functions, SavedProgram, WebSocketIP
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+import os
 
 #Diffrent IPs used to test. Will eventually need to get the server and ice server variables from the DJango server automatically.
 #172.28.123.183 Dreese lab ip
@@ -224,7 +226,7 @@ def finish_program(request, robot_id):
 def sitemap_view(request):
     return render(request, 'sitemap.html')
 
-def code_templates(request):
+def code_template_page(request):
     return render(request, 'codetemplates.html')
 
 def stream(request):
