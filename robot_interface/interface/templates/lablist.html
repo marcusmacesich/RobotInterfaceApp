@@ -52,13 +52,35 @@
         .lab-buttons a:hover {
             background-color: #1669c1;
         }
+        
+        .btn:hover {
+            background-color: #1669c1;
+        }
+        .button-link {
+            display: inline-block;          /* Make it behave like a button in terms of layout */
+            padding: 8px 20px;             /* Add padding for button appearance */
+            background-color: #1a73e8;    /* Green background (example) */
+            color: white;                 /* White text color */
+            text-align: center;             /* Center text */
+            text-decoration: none;          /* Remove underline from link */
+            border: none;                   /* Remove default border */
+            border-radius: 4px;             /* Rounded corners (optional) */
+            cursor: pointer;                /* Change cursor to pointer on hover */
+            font-size: 16px;                /* Adjust font size */
+        }   
+
+        .button-link:hover {
+            background-color: #1669c1;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
         <h1>Lab List</h1>
+        
     </div>
     <div class="lab-buttons">
+        <a id="back-home" href="{% url 'interface' %}" class="button-link">Back Home</a>
         <a href="/lab/1/" target="_blank">Lab 1</a>
         <a href="/lab/2/" target="_blank">Lab 2</a>
         <a href="/lab/3/" target="_blank">Lab 3</a>

@@ -34,6 +34,9 @@
         }
         /* Toggle button container */
         .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             max-width: 1200px;
             margin: 20px auto;
             padding: 0 20px;
@@ -168,6 +171,15 @@
         .button-link:hover {
             background-color: #1669c1;
         }   
+
+        .saved-program-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .saved-program-container label {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -181,6 +193,18 @@
     <div class="toggle-container">
         <button id="toggle-sidebar-btn" onclick="toggleSidebar()">Show Functions</button>
         <a id="to-code-templates" href="{% url 'codetemplates' %}" class="button-link">Code Templates</a>
+        <a id="to-lab-list" href="{% url 'lab_list' %}" class="button-link">Labs</a>
+        <div class="saved-program-container">
+            <label for="saved-program-select">Load Saved Program:</label>
+            <select id="saved-program-select">
+                <option value="">--Select a saved program--</option>
+                {% for program in saved_programs %}
+                    <option value="{{ program.id }}" data-code="{{ program.code|escapejs }}">
+                        {{ program.program_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
 
     <!-- Main Content with Sidebar and Editor -->
@@ -232,6 +256,17 @@
         editor.setTheme("ace/theme/github");
         editor.session.setMode("ace/mode/python");
         editor.setOptions({ fontSize: "13pt" });
+
+        // Listen for change events on the saved program dropdown
+        document.getElementById('saved-program-select').addEventListener('change', function() {
+            var selectedOption = document.getElementById('saved-program-select').options[
+                document.getElementById('saved-program-select').selectedIndex
+            ];
+            var rawCode = selectedOption.getAttribute('data-code');
+            // Use JSON.Parse to convert escape sequences to actual characters
+            var code = JSON.parse('"' + rawCode +'"');
+            editor.setValue(code, -1);
+        });
 
         // Insert function name into the editor when a function is clicked
         function insertFunction(funcName) {
@@ -285,6 +320,8 @@
             document.body.appendChild(form);
             form.submit();
         });
+
+        
 
         // Save text persistently in localStorage
         editor.addEventListener('input', function(){

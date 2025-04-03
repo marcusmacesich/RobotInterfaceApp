@@ -22,8 +22,9 @@ def interface(request):
     
     # Get all of the function objects for code blocks
     functions = Functions.objects.all()
+    saved_programs = SavedProgram.objects.filter(student=request.user)
     # Load the editor interface page
-    return render(request, 'idewindow.html', {'functions': functions})
+    return render(request, 'idewindow.html', {'functions': functions, 'saved_programs': saved_programs})
 
 # Function to handle when the 'Upload' button is pressed
 def upload_program(request):
