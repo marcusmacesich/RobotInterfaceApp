@@ -251,7 +251,7 @@
             let lines = data.split('\n');
             lines = lines.filter((item) => item.length !== 0);
 
-            for (const element of lines) { // Use a `for...of` loop for sequential processing
+            for (const element of lines) {
                 let fileSeekNames = element.split(":");
                 for (let i = 0; i < fileSeekNames.length; i++) {
                     if (i % 2 === 1) {
