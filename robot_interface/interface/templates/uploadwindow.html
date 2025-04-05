@@ -96,6 +96,22 @@
             color: #777;
             font-size: 14px;
         }
+        .button-link {
+            display: inline-block;          /* Make it behave like a button in terms of layout */
+            padding: 8px 20px;             /* Add padding for button appearance */
+            background-color: #1a73e8;    /* Green background (example) */
+            color: white;                 /* White text color */
+            text-align: center;             /* Center text */
+            text-decoration: none;          /* Remove underline from link */
+            border: none;                   /* Remove default border */
+            border-radius: 4px;             /* Rounded corners (optional) */
+            cursor: pointer;                /* Change cursor to pointer on hover */
+            font-size: 16px;                /* Adjust font size */
+        }   
+
+        .button-link:hover {
+            background-color: #1669c1;
+        } 
     </style>
 </head>
 <body>
@@ -131,7 +147,10 @@
                 <button id="start-btn" data-program-id="{{ program.id }}" data-robot-id="{{ program.robot.id }}">Start Program</button>
                 <button id="stop-btn" data-program-id="{{ program.id }}" data-robot-id="{{ program.robot.id }}">Stop Program</button>
                 <button id="requeue-btn" data-program-id="{{ program.id }}" data-robot-id="{{ program.robot.id }}">Requeue Program</button>
-            {% else %}
+                <div class="links">
+                    <a id="to-code-templates" href="{% url 'interface' %}" class="button-link">Main Page</a>
+                </div>
+                {% else %}
                 <p>No program uploaded yet.</p>
             {% endif %}
 

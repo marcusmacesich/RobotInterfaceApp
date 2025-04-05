@@ -15,7 +15,8 @@ ip_address = "172.27.52.190"
 stun_server = "stun:stun.l.google.com:19302"
 
 # Retrieves the IP address that the websockets server is running on from the DB
-web_ip_address = WebSocketIP.objects.first()
+#web_ip_address = WebSocketIP.objects.first()
+web_ip_address = "10.42.0.151"
 
 # Function to load the HTML of the IDE page
 def interface(request):

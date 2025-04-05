@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-t@j19b1-q@azp4=8pdbe$111_8ri71-bmpg_%4+3q#y2o1i*lk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.108', '127.0.0.1', '192.168.28.99', '192.168.1.128', '192.168.140.99', 'ecerobotapp', 'localhost', '10.81.13.89']
+ALLOWED_HOSTS = ['192.168.1.108', '127.0.0.1', '192.168.28.99', '192.168.1.128', '192.168.140.99', 'ecerobotapp', 'localhost', '10.81.13.89', '192.0.0.2', '10.42.0.151']
 
 
 # Application definition
