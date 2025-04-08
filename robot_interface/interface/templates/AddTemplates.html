@@ -88,14 +88,21 @@
         */
         function appendElement() {
             let filename = customNameInput.value;
+            let flag = 0;
             if(filename === "" && currentUploadedCode === ""){
                 alert("No name was chosen or code uploaded for template page display!");
+                flag = 1;
             }
             if(filename === ""){
                 alert("No name was chosen for template page display!");
+                flag = 1;
             }
             if(currentUploadedCode === ""){
-                alert("No code was uploaded for template page display!")
+                alert("No code was uploaded for template page display!");
+                flag = 1;
+            }
+            if (flag == 1){
+                return;
             }
             else{
                 let output  = "Name of file: " + currentFileName + "|" + "Display name on templates: "+filename;
@@ -105,7 +112,7 @@
                 fetch('/get-template-names/')
                 .then(response => response.text())
                 .then(data => {
-                    let write2 = "namesWrite\nnames.txt\n"+data+filename+":"+fname+"\n";
+                    let write2 = "namesWrite\nnames.txt\n"+data+filename+":"+fname+"\n\n";
                     sendDataToDjango(write2);
                 })
                 .catch(error => console.error('Error fetching rules:', error));
@@ -185,7 +192,7 @@
                 let lines = data.split('\n');
                 lines = lines.filter(line => line !== `${displayName}:${filename}` && line.trim() !== ''); // Filter out the line to remove and empty lines
                 let updatedNamesContent = lines.join('\n');
-                let writeNames = "namesWrite\nnames.txt\n" + updatedNamesContent;
+                let writeNames = "namesWrite\nnames.txt\n" + updatedNamesContent + "\n\n";
                 sendDataToDjango(writeNames);
             })
             .catch(error => console.error('Error fetching names:', error));
