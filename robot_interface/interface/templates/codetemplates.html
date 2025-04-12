@@ -250,7 +250,7 @@
     <div id="functional-block">
         <h3>Upload python file</h3>
         <div class="functional-controls">
-            <input type="file" id="inputfile">
+            <input type="file" id="inputfile" accept=".py">
             <button type="button" id="load-to-editor-btn">Load File to Editor</button>
         </div>
         <pre id="output"></pre>
@@ -272,17 +272,11 @@
         </div>
     {% endif %}
     <script>{% load static %}</script>
-    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+   <!-- <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         let selectedBlockId = null;
-        /*
-        * Function is called whenever a block is clicked.
-        *
-        * By passing in the blockId as to the function, string manipulation can add and remove the selected tag.
-        * The selectedBlockId is also used in copySelectedText.
-        * 
-        * Updates selectedBlockId to blockId
-        */
+
         function selectBlock(blockId) {
             if (selectedBlockId) {
                 document.getElementById(`textBlock${selectedBlockId}`).classList.remove('selected');
@@ -291,33 +285,64 @@
             document.getElementById(`textBlock${blockId}`).classList.add('selected');
         }
 
-        /*
-        * Copies the text to the clipboard and to the local storage name codeText.
-        * Takes the text from the selected text box.
-        * 
-        * No changes to the variables. 
-        */
-        function copySelectedText() {
+        /**
+         * Copies text to the clipboard.
+         *
+         * @param {string} text - The text to copy to the clipboard.
+         * @returns {Promise<boolean>} - Resolves to true if copy is successful, false otherwise.
+         */
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true; // Indicate success
+            } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+                return false; // Indicate failure
+            }
+        }
+
+        /**
+         * Stores text in local storage under the key "codeText".
+         *
+         * @param {string} text - The text to store in local storage.
+         * @returns {boolean} - Returns true if storage is successful, false otherwise.
+         */
+        function copyToLocalStorage(text) {
+            try {
+                localStorage.setItem("codeText", text);
+                return true; // Indicate success
+            } catch (err) {
+                console.error('Failed to save to local storage:', err);
+                return false; // Indicate failure
+            }
+        }
+
+        /**
+         * Copies the text from the selected block to both clipboard and local storage.
+         */
+        async function copySelectedText() {
+            console.log("copySelectedText function called");
             if (selectedBlockId) {
                 const selectedText = document.getElementById(`extraContent${selectedBlockId}`).textContent.trim();
-                navigator.clipboard.writeText(selectedText).then(() => {
-                    localStorage.setItem("codeText", selectedText);
+
+                const clipboardSuccess = await copyToClipboard(selectedText);
+                const localStorageSuccess = copyToLocalStorage(selectedText);
+
+                if (clipboardSuccess && localStorageSuccess) {
                     alert('Selected text copied to workspace and clipboard!');
-                }).catch(err => {
-                    alert('Failed to copy text.');
-                });
+                } else if (clipboardSuccess) {
+                    alert('Selected text copied to clipboard, but failed to save to workspace.');
+                } else if (localStorageSuccess) {
+                    alert('Selected text saved to workspace, but failed to copy to clipboard.');
+                } else {
+                    alert('Failed to copy text to clipboard and workspace.');
+                }
+
             } else {
                 alert('Please select a block first.');
             }
         }
 
-        /*
-        * The function changes the display type of the extra content
-        * None hides the code, while block show it
-        * Also changes the arrow direction.
-        * 
-        * No changes to the variables.
-        */
         function toggleDropdown(event, blockId) {
             event.stopPropagation();
             const block = document.getElementById(`textBlock${blockId}`);
@@ -344,20 +369,6 @@
             fr.readAsText(this.files[0]);
         });
 
-        // Button to load file content into the editor
-        document.getElementById('load-to-editor-btn').addEventListener('click', function () {
-            const fileContent = document.getElementById('output').textContent;
-            if (fileContent.trim()) {
-                navigator.clipboard.writeText(fileContent.trim()).then(() => {
-                    localStorage.setItem("codeText", fileContent.trim());
-                    alert('Uploaded code added to workspace and clipboard!');
-                }).catch(err => {
-                    alert('Failed to copy text.');
-                });
-            } else {
-                alert('No file content to load. Please upload a file first.');
-            }
-        });
 
         //Code that runs on load to populate the site
         var labs = 1;
@@ -366,7 +377,7 @@
         .then(async (data) => {
             let lines = data.split('\n');
             lines = lines.filter((item) => item.length !== 0);
-            
+
             for (const element of lines) { // Use a `for...of` loop for sequential processing
                 let fileSeekNames = element.split(":");
                 for (let i = 0; i < fileSeekNames.length; i++) {
@@ -408,6 +419,29 @@
             });
         }
 
+        // Button to load file content into the editor
+        document.getElementById('load-to-editor-btn').addEventListener('click', async function () { // Make the event listener async
+            console.log("load-to-editor-btn event listener triggered");
+            const fileContent = document.getElementById('output').textContent;
+            if (fileContent.trim()) {
+
+                const clipboardSuccess = await copyToClipboard(fileContent.trim());
+                const localStorageSuccess = copyToLocalStorage(fileContent.trim());
+
+                if (clipboardSuccess && localStorageSuccess) {
+                    alert('Uploaded code added to workspace and clipboard!');
+                } else if (clipboardSuccess) {
+                    alert('Uploaded code copied to clipboard, but failed to save to workspace.');
+                } else if (localStorageSuccess) {
+                    alert('Uploaded code saved to workspace, but failed to copy to clipboard.');
+                } else {
+                    alert('Failed to copy uploaded code to clipboard and workspace.');
+                }
+
+            } else {
+                alert('No file content to load. Please upload a file first.');
+            }
+        });
     </script>
 
 </body>
