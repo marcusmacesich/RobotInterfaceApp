@@ -57,3 +57,11 @@ class code_templates(models.Model):
 
     def __str__(self):
         return self.name # For a readable representation in the admin and shell
+
+# Model to describe uploaded Lab Documents
+class LabDocument(models.Model):
+    display_name = models.TextField(max_length=50)
+    file_name = models.TextField(max_length=50)
+
+    def __str__(self):
+        return self.display_name

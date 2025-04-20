@@ -22,5 +22,7 @@ urlpatterns = [
     path('fetch_text_file/', views.fetch_text_file, name='fetch_text_file'),
     path('handle_text_data/', views.handle_text_data, name='handle_text_data'),
     path('lab/<int:lab_id>/', views.lab_view, name='lab_view'),
-    path('lab_list/', views.lab_list, name='lab_list')
+    path('lab_list/', views.lab_list, name='lab_list'),
+    path('upload_lab/', views.upload_lab, name='upload_lab'),
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard')
 ]

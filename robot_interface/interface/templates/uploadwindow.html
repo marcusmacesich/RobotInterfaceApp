@@ -315,7 +315,7 @@
             if (wsTrig == 1) {
 
                 // Construct the WebSocket URL
-                var wsURL = "ws://{{ web_ip_address }}:8001/ws/robot/{{ program.robot.id }}/";
+                var wsURL = "{{ ws_base }}:8001/ws/robot/{{ program.robot.id }}/";
                 appendToConsole(wsURL);
                 var consoleSocket = new WebSocket(wsURL);
 

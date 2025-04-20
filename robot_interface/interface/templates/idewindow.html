@@ -205,6 +205,10 @@
                 {% endfor %}
             </select>
         </div>
+        {% if user.is_superuser %}
+        <a id="to-admin-dashboard" href="{% url 'admin_dashboard' %}" class="button-link">Admin Dashboard</a>
+        {% endif %}
+
     </div>
 
     <!-- Main Content with Sidebar and Editor -->

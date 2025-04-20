@@ -2,11 +2,14 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, FileResponse, Http404
 from interface.models import code_templates
 from django.template import loader
-from .models import Robot, Program, Functions, SavedProgram, WebSocketIP
+from .models import Robot, Program, Functions, SavedProgram, WebSocketIP, LabDocument
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.shortcuts import get_object_or_404
 
 #Diffrent IPs used to test. Will eventually need to get the server and ice server variables from the DJango server automatically.
 #172.28.123.183 Dreese lab ip
@@ -74,8 +77,13 @@ def upload_page(request, program_id):
     except Program.DoesNotExist:
         program = None
 
-    return render(request, 'uploadwindow.html', {'status': status, 'program': program, 'ip_address': ip_address,'stun_server': stun_server, 'web_ip_address': web_ip_address})
-
+    host = request.get_host().split(':')[0]          # get the active ip address
+    scheme = 'ws' if request.is_secure() is False else 'wss'
+    ws_base = f"{scheme}://{host}"
+    return render(request, 'uploadwindow.html', {
+        'program': program,
+        'ws_base': ws_base,
+    })
 # Function to begin the save process
 def prepare_save(request):
     if request.method == 'POST':
@@ -394,19 +402,75 @@ def remove_file(input_string):
         print(f"Item {name_to_delete} not found for deletion.")
 
 # Opens a new tab with the lab pdf
+
 def lab_view(request, lab_id):
+    """
+    Lookup the LabDocument by its ID, then open and stream
+    the PDF whose filename is stored in the model.
+    """
+    # 1) Fetch the model (404 if not found)
+    lab_doc = get_object_or_404(LabDocument, id=lab_id)
 
-    lab_number = lab_id
+    # 2) Build the absolute path to your files/labs directory
+    file_path = os.path.join(
+        settings.BASE_DIR,
+        'interface', 'files', 'labs',
+        lab_doc.file_name
+    )
 
-    try:
-        return FileResponse(open(f'./interface/files/labs/lab{lab_number}.pdf', 'rb'), content_type='application/pdf')
-    except FileNotFoundError:
-        raise Http404()
+    # 3) If the file isn’t on disk, return 404
+    if not os.path.exists(file_path):
+        raise Http404(f"Lab file '{lab_doc.file_name}' not found.")
+
+    # 4) Stream it back as PDF
+    return FileResponse(
+        open(file_path, 'rb'),
+        content_type='application/pdf'
+    )
 
 # Lists all of the labs with buttons to retrieve them
 def lab_list(request):
+    # grab all your uploaded labs (order by whatever you like)
+    labs = LabDocument.objects.all().order_by('id')
+    return render(request, 'lablist.html', {
+        'labs': labs
+    })
 
-    #labs = labs.Objects.all()
 
-    return render(request, 'lablist.html')
 
+def upload_lab(request):
+    """
+    GET:  render upload form
+    POST: save uploaded PDF to /files/labs/, record its filename + display_name
+    """
+    error = None
+
+    if request.method == 'POST':
+        display_name  = request.POST.get('display_name', '').strip()
+        uploaded_file = request.FILES.get('lab_file')
+
+        if not display_name or not uploaded_file:
+            error = "You must provide both a display name and a PDF file."
+        else:
+            # where to save on disk: <project_root>/files/labs/
+            target_dir = os.path.join(settings.BASE_DIR, 'interface', 'files', 'labs')
+            os.makedirs(target_dir, exist_ok=True)
+
+            fs = FileSystemStorage(location=target_dir)
+            # this preserves the original uploaded filename
+            saved_filename = fs.save(uploaded_file.name, uploaded_file)
+
+            # record in the database
+            LabDocument.objects.create(
+                display_name=display_name,
+                file_name=saved_filename
+            )
+            return redirect('lab_list')  # or wherever you list your labs
+
+    return render(request, 'UploadLab.html', {
+        'error': error
+    })
+
+
+def admin_dashboard(request):
+    return render(request, 'AdminDashboard.html')
